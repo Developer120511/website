@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TitanDrive · Repositorio Digital</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Inter:opsz,wght@14..32,300;14..32,400;14..32,600&display=swap" rel="stylesheet" />
+    <style>
+        /* ===== RESET Y VARIABLES ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #111118;
+            --bg-card: rgba(18, 18, 30, 0.75);
+            --text-primary: #e8e8f0;
+            --text-secondary: #a8b0c8;
+            --cyan: #00f0ff;
+            --magenta: #ff00c8;
+            --blue: #4060ff;
+            --glow-cyan: 0 0 30px rgba(0, 240, 255, 0.25);
+            --glow-magenta: 0 0 30px rgba(255, 0, 200, 0.2);
+            --border-glow: 0 0 15px rgba(0, 240, 255, 0.2);
+            --font-display: 'Orbitron', monospace;
+            --font-body: 'Inter', sans-serif;
+            --transition-smooth: 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+            --transition-bounce: 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+            --shadow-card: 0 20px 60px rgba(0, 0, 0, 0.7);
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        /* ===== FONDO DINÁMICO ===== */
+        #bg-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .grid-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image:
+                linear-gradient(rgba(0, 240, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 240, 255, 0.03) 1px, transparent 1px);
+            background-size: 60px 60px;
+            z-index: 1;
+            pointer-events: none;
+            mask-image: radial-gradient(ellipse at center, black 40%, transparent 70%);
+            -webkit-mask-image: radial-gradient(ellipse at center, black 40%, transparent 70%);
+        }
+
+        .vignette {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(ellipse at center, transparent 50%, rgba(0,0,0,0.5) 100%);
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        /* ===== CONTENEDOR ===== */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* ===== HEADER ===== */
+        header {
+            background: rgba(10, 10, 15, 0.75);
+            backdrop-filter: blur(24px) saturate(1.6);
+            border-bottom: 1px solid rgba(0, 240, 255, 0.08);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            transition: background var(--transition-smooth), box-shadow var(--transition-smooth);
+        }
+
+        header.scrolled {
+            background: rgba(10, 10, 15, 0.92);
+            box-shadow: 0 4px 40px rgba(0, 0, 0, 0.5);
+            border-bottom-color: rgba(0, 240, 255, 0.15);
+        }
+
+        .nav-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .logo {
+            font-family: var(--font-display);
+            font-size: 1.8rem;
+            font-weight: 900;
+            letter-spacing: 2px;
+            background: linear-gradient(135deg, var(--cyan), var(--magenta));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 40px rgba(0, 240, 255, 0.15);
+            transition: transform var(--transition-bounce);
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+        .logo::before {
+            content: '⟨';
+            font-weight: 400;
+            opacity: 0.6;
+        }
+        .logo::after {
+            content: '⟩';
+            font-weight: 400;
+            opacity: 0.6;
+        }
+        .logo:hover {
+            transform: scale(1.02) skewX(-2deg);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2.5rem;
+            list-style: none;
+            flex-wrap: wrap;
+        }
+
+        .nav-links a {
+            font-family: var(--font-display);
+            font-weight: 600;
+            font-size: 0.75rem;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+            padding: 0.3rem 0;
+            position: relative;
+            transition: color var(--transition-smooth);
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: -2px;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--cyan), var(--magenta));
+            transition: width var(--transition-smooth);
+            box-shadow: 0 0 12px rgba(0, 240, 255, 0.4);
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: var(--text-primary);
+        }
+
+        .nav-links a:hover::after,
+        .nav-links a.active::after {
+            width: 100%;
+        }
+
+        /* ===== SECCIONES ===== */
+        section {
+            padding: 5rem 0;
+            position: relative;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeSlideUp 1s ease forwards;
+        }
+
+        section:nth-child(2) {
+            animation-delay: 0.15s;
+        }
+        section:nth-child(3) {
+            animation-delay: 0.3s;
+        }
+
+        @keyframes fadeSlideUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .section-title {
+            font-family: var(--font-display);
+            font-size: 3.4rem;
+            font-weight: 900;
+            line-height: 1.1;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--cyan), var(--blue), var(--magenta));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -1px;
+            text-shadow: 0 0 60px rgba(0, 240, 255, 0.1);
+        }
+
+        .section-sub {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            max-width: 620px;
+            font-weight: 300;
+            letter-spacing: 0.3px;
+        }
+
+        .section-text {
+            font-size: 1.05rem;
+            color: var(--text-secondary);
+            max-width: 680px;
+            line-height: 1.8;
+            font-weight: 300;
+            letter-spacing: 0.2px;
+        }
+
+        /* ===== CONTACTO ===== */
+        .contact-list {
+            display: flex;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+            margin-top: 1.5rem;
+        }
+
+        .contact-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.8rem;
+            background: var(--bg-card);
+            backdrop-filter: blur(12px);
+            padding: 0.8rem 2rem;
+            border-radius: 60px;
+            border: 1px solid rgba(0, 240, 255, 0.15);
+            box-shadow: var(--shadow-card);
+            transition: all var(--transition-smooth);
+            color: var(--text-primary);
+            font-weight: 500;
+            font-size: 0.95rem;
+            text-decoration: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .contact-item::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at 30% 30%, rgba(0, 240, 255, 0.05), transparent 70%);
+            opacity: 0;
+            transition: opacity var(--transition-smooth);
+        }
+
+        .contact-item:hover {
+            border-color: var(--cyan);
+            box-shadow: var(--glow-cyan), var(--shadow-card);
+            transform: translateY(-4px) scale(1.02);
+            color: var(--cyan);
+        }
+
+        .contact-item:hover::before {
+            opacity: 1;
+        }
+
+        .contact-item .icon {
+            font-size: 1.3rem;
+        }
+
+        /* ===== REPOSITORIO (tarjetas) ===== */
+        .repo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+            gap: 2.5rem;
+            margin-top: 3rem;
+            width: 100%;
+        }
+
+        .repo-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(16px);
+            border-radius: 24px;
+            padding: 2rem 1.8rem;
+            border: 1px solid rgba(0, 240, 255, 0.08);
+            box-shadow: var(--shadow-card);
+            transition: all var(--transition-smooth);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .repo-card::before {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            border-radius: 24px;
+            padding: 2px;
+            background: linear-gradient(135deg, var(--cyan), var(--magenta), var(--blue));
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            opacity: 0;
+            transition: opacity var(--transition-smooth);
+        }
+
+        .repo-card:hover {
+            transform: translateY(-8px) scale(1.01);
+            border-color: transparent;
+            box-shadow: var(--glow-cyan), var(--shadow-card);
+        }
+
+        .repo-card:hover::before {
+            opacity: 0.6;
+        }
+
+        .repo-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 80px;
+            height: 80px;
+            background: radial-gradient(circle at 100% 0%, rgba(0, 240, 255, 0.06), transparent 70%);
+            pointer-events: none;
+        }
+
+        .repo-card h3 {
+            font-family: var(--font-display);
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--cyan);
+            letter-spacing: 0.5px;
+            text-shadow: 0 0 20px rgba(0, 240, 255, 0.1);
+        }
+
+        .repo-card p {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            margin-bottom: 1.8rem;
+            flex: 1;
+            font-weight: 300;
+            letter-spacing: 0.2px;
+        }
+
+        .btn-download {
+            display: inline-block;
+            background: transparent;
+            color: var(--cyan);
+            border: 1px solid var(--cyan);
+            padding: 0.6rem 1.8rem;
+            border-radius: 60px;
+            font-family: var(--font-display);
+            font-weight: 600;
+            font-size: 0.7rem;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            text-align: center;
+            transition: all var(--transition-smooth);
+            align-self: flex-start;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.05);
+        }
+
+        .btn-download::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 240, 255, 0.15), transparent);
+            transition: left 0.7s ease;
+        }
+
+        .btn-download:hover::before {
+            left: 100%;
+        }
+
+        .btn-download:hover {
+            background: var(--cyan);
+            color: var(--bg-primary);
+            box-shadow: var(--glow-cyan);
+            transform: scale(1.04) translateY(-2px);
+            border-color: var(--cyan);
+        }
+
+        .btn-download.disabled {
+            opacity: 0.3;
+            pointer-events: none;
+            border-color: #444;
+            color: #666;
+            box-shadow: none;
+        }
+
+        /* ===== FOOTER ===== */
+        footer {
+            margin-top: auto;
+            text-align: center;
+            padding: 2.5rem 0;
+            border-top: 1px solid rgba(0, 240, 255, 0.05);
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+            font-weight: 300;
+            letter-spacing: 0.5px;
+            position: relative;
+            z-index: 2;
+            font-family: var(--font-body);
+        }
+
+        footer span {
+            background: linear-gradient(135deg, var(--cyan), var(--magenta));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 600;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 1.5rem;
+            }
+
+            .nav-bar {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 0.5rem;
+            }
+
+            .logo {
+                text-align: center;
+                font-size: 1.5rem;
+                justify-content: center;
+            }
+
+            .nav-links {
+                justify-content: center;
+                gap: 1.2rem;
+            }
+
+            .nav-links a {
+                font-size: 0.65rem;
+                letter-spacing: 1px;
+            }
+
+            .section-title {
+                font-size: 2.6rem;
+            }
+
+            .section-sub {
+                font-size: 1rem;
+            }
+
+            .contact-list {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .contact-item {
+                justify-content: center;
+            }
+
+            .repo-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .nav-links {
+                gap: 0.8rem;
+            }
+            .section-title {
+                font-size: 2rem;
+            }
+            .repo-card {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- CANVAS DE PARTÍCULAS Y EFECTOS -->
+    <canvas id="bg-canvas"></canvas>
+    <div class="grid-overlay"></div>
+    <div class="vignette"></div>
+
+    <!-- HEADER -->
+    <header id="header">
+        <div class="container nav-bar">
+            <div class="logo">TitanDrive</div>
+            <ul class="nav-links">
+                <li><a href="#inicio">Inicio</a></li>
+                <li><a href="repositorio.html">Repositorio</a></li>
+            </ul>
+        </div>
+    </header>
+
+    <main>
+        <!-- INICIO -->
+        <section id="inicio">
+            <div class="container">
+                <h1 class="section-title">TitanDrive</h1>
+                <p class="section-sub">Tu espacio para compartir y acceder a archivos.</p>
+                <p style="margin-top: 1.2rem; color: var(--text-secondary); font-weight: 300; max-width: 600px; letter-spacing: 0.3px;">
+                    Organiza, comparte y descarga recursos de forma rápida y segura.
+                </p>
+            </div>
+        </section>
+
+        <!-- SOBRE NOSOTROS -->
+        <section id="sobre-nosotros" style="background: rgba(17, 17, 24, 0.4); backdrop-filter: blur(4px); border-top: 1px solid rgba(0, 240, 255, 0.04); border-bottom: 1px solid rgba(0, 240, 255, 0.04);">
+            <div class="container">
+                <h2 class="section-title">Sobre TitanDrive</h2>
+                <p class="section-text">
+                    TitanDrive fue creado para centralizar y compartir recursos de manera segura y organizada.
+                    Nuestro objetivo es ofrecer un acceso rápido y confiable a archivos importantes.
+                </p>
+            </div>
+        </section>
+
+        <!-- CONTACTO -->
+        <section id="contacto">
+            <div class="container">
+                <h2 class="section-title">Contacto</h2>
+                <p class="section-text" style="margin-bottom: 1.5rem;">
+                    ¿Tienes alguna pregunta o sugerencia? Escríbenos.
+                </p>
+                <div class="contact-list">
+                    <a href="mailto:apexsolutions1205@gmail.com" class="contact-item">
+                        <span class="icon">✉</span> apexsolutions1205@gmail.com
+                    </a>
+                    <a href="https://wa.me/5355857689" target="_blank" rel="noopener" class="contact-item">
+                        <span class="icon">📱</span> +53 5585 7689
+                    </a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <span>TitanDrive</span> — Repositorio digital seguro · Hecho por Daniel A. Tellez Trujillo
+        </div>
+    </footer>
+
+    <script>
+        // ===== PARTÍCULAS CONECTADAS (efecto red) =====
+        (function() {
+            const canvas = document.getElementById('bg-canvas');
+            const ctx = canvas.getContext('2d');
+            let width, height;
+            let particles = [];
+            const NUM = 100;
+            const CONNECTION_DIST = 150;
+            const SPEED = 0.3;
+
+            function resize() {
+                width = canvas.width = window.innerWidth;
+                height = canvas.height = window.innerHeight;
+            }
+            window.addEventListener('resize', resize);
+            resize();
+
+            for (let i = 0; i < NUM; i++) {
+                particles.push({
+                    x: Math.random() * width,
+                    y: Math.random() * height,
+                    vx: (Math.random() - 0.5) * SPEED * 2,
+                    vy: (Math.random() - 0.5) * SPEED * 2,
+                    r: Math.random() * 2 + 1,
+                    alpha: Math.random() * 0.6 + 0.2,
+                });
+            }
+
+            function draw() {
+                ctx.clearRect(0, 0, width, height);
+
+                particles.forEach(p => {
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    if (p.x < 0 || p.x > width) p.vx *= -1;
+                    if (p.y < 0 || p.y > height) p.vy *= -1;
+                });
+
+                for (let i = 0; i < particles.length; i++) {
+                    for (let j = i + 1; j < particles.length; j++) {
+                        const dx = particles[i].x - particles[j].x;
+                        const dy = particles[i].y - particles[j].y;
+                        const dist = Math.sqrt(dx * dx + dy * dy);
+                        if (dist < CONNECTION_DIST) {
+                            const alpha = 0.15 * (1 - dist / CONNECTION_DIST);
+                            ctx.beginPath();
+                            ctx.moveTo(particles[i].x, particles[i].y);
+                            ctx.lineTo(particles[j].x, particles[j].y);
+                            ctx.strokeStyle = `rgba(0, 240, 255, ${alpha})`;
+                            ctx.lineWidth = 0.6;
+                            ctx.stroke();
+                        }
+                    }
+                }
+
+                particles.forEach(p => {
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(0, 240, 255, ${p.alpha * 0.6})`;
+                    ctx.fill();
+                    ctx.shadowColor = 'rgba(0, 240, 255, 0.2)';
+                    ctx.shadowBlur = 8;
+                    ctx.fill();
+                    ctx.shadowBlur = 0;
+                });
+
+                requestAnimationFrame(draw);
+            }
+            draw();
+        })();
+
+        // ===== HEADER SCROLL =====
+        const header = document.getElementById('header');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 30) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        });
+    </script>
+</body>
+</html>
