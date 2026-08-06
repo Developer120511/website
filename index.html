@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <script>document.documentElement.classList.add('has-js');</script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TitanDrive · Archivo Digital</title>
+    <meta name="description" content="TitanDrive — catálogo y archivo digital de recursos y software, organizado por categorías." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,600&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+    <canvas id="dust-canvas"></canvas>
+    <div class="grid-overlay"></div>
+    <div class="aurora"><span></span><span></span><span></span></div>
+
+    <header id="header">
+        <div class="container nav-bar">
+            <a href="index.html" class="logo">TitanDrive <span class="mark">Archivo</span></a>
+            <ul class="nav-links">
+                <li><a href="#inicio" data-n="01" class="active">Inicio</a></li>
+                <li><a href="#sobre" data-n="02">Sobre</a></li>
+                <li><a href="repositorio.html" data-n="03">Repositorio</a></li>
+                <li><a href="#contacto" data-n="04">Contacto</a></li>
+            </ul>
+        </div>
+    </header>
+
+    <main>
+        <!-- INICIO -->
+        <section id="inicio" class="hero">
+            <div class="container">
+                <div class="hero-top reveal in-view">
+                    <div class="stamp" aria-hidden="true">
+                        <svg viewBox="0 0 200 200">
+                            <defs>
+                                <path id="circlePath" d="M 100,100 m -82,0 a 82,82 0 1,1 164,0 a 82,82 0 1,1 -164,0" />
+                            </defs>
+                            <circle cx="100" cy="100" r="82" fill="none" stroke="rgba(201,162,39,0.35)" stroke-width="1" />
+                            <circle cx="100" cy="100" r="68" fill="none" stroke="rgba(201,162,39,0.18)" stroke-width="1" />
+                            <text font-family="IBM Plex Mono, monospace" font-size="10.5" letter-spacing="3" fill="#c9a227">
+                                <textPath href="#circlePath" startOffset="0%">ARCHIVO DIGITAL · CATÁLOGO VERIFICADO · </textPath>
+                            </text>
+                        </svg>
+                        <div class="stamp-center">
+                            <span class="glyph">Td</span>
+                            <span class="sub">Est. 2026</span>
+                        </div>
+                    </div>
+                    <div>
+                        <p class="eyebrow">Repositorio digital</p>
+                        <h1 class="section-title">Un archivo, no<br>un montón de <em>enlaces</em>.</h1>
+                    </div>
+                </div>
+
+                <p class="lede reveal in-view">
+                    TitanDrive organiza software y recursos en un catálogo con categorías, fichas
+                    y control de versión — cada elemento con su propio registro, listo para consultar
+                    o descargar en segundos.
+                </p>
+
+                <div class="hero-actions reveal in-view">
+                    <a href="repositorio.html" class="btn btn-primary">Explorar el repositorio →</a>
+                    <a href="#sobre" class="btn btn-ghost">Cómo funciona</a>
+                </div>
+
+                <div class="ledger reveal">
+                    <div class="ledger-item">
+                        <span class="ledger-num"><span data-count="11">0</span></span>
+                        <span class="ledger-label">Categorías activas</span>
+                    </div>
+                    <div class="ledger-item">
+                        <span class="ledger-num"><span data-count="45">0</span></span>
+                        <span class="ledger-label">Recursos catalogados</span>
+                    </div>
+                    <div class="ledger-item">
+                        <span class="ledger-num">2026</span>
+                        <span class="ledger-label">Última actualización</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SOBRE -->
+        <section id="sobre">
+            <div class="container">
+                <p class="eyebrow reveal">Sobre el archivo</p>
+                <h2 class="section-title reveal">Cómo está organizado</h2>
+                <p class="section-text reveal">
+                    Cada recurso vive dentro de una categoría con su propia ficha: nombre, procedencia
+                    y enlace directo. Nada de carpetas sueltas ni búsquedas interminables — el objetivo
+                    es que encuentres lo que necesitas y salgas con el archivo en mano.
+                </p>
+
+                <div class="feature-row">
+                    <div class="feature-card reveal">
+                        <span class="num">01</span>
+                        <h3>Catalogado por categoría</h3>
+                        <p>Software, frameworks, utilidades y más — cada uno en su propio apartado, sin mezclar.</p>
+                    </div>
+                    <div class="feature-card reveal">
+                        <span class="num">02</span>
+                        <h3>Verificado y vigente</h3>
+                        <p>Las fichas se revisan y actualizan; si un enlace deja de servir, se reemplaza.</p>
+                    </div>
+                    <div class="feature-card reveal">
+                        <span class="num">03</span>
+                        <h3>Acceso directo</h3>
+                        <p>Sin registros ni esperas. Abres la categoría, eliges el archivo y descargas.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CONTACTO -->
+        <section id="contacto">
+            <div class="container">
+                <p class="eyebrow reveal">Contacto</p>
+                <h2 class="section-title reveal">¿Falta algo en el archivo?</h2>
+                <p class="section-text reveal">
+                    Si buscas un recurso que no está catalogado, o encontraste un enlace caído, escríbenos.
+                </p>
+                <div class="contact-list reveal">
+                    <a href="mailto:apexsolutions1205@gmail.com" class="contact-item">
+                        <div>
+                            <span class="tag">Correo</span>
+                            apexsolutions1205@gmail.com
+                        </div>
+                    </a>
+                    <a href="https://wa.me/5355857689" target="_blank" rel="noopener" class="contact-item">
+                        <div>
+                            <span class="tag">WhatsApp</span>
+                            +53 5585 7689
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container" style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:0.8rem;">
+            <span class="brand"><b>TitanDrive</b> — archivo digital</span>
+            <span>Hecho por Daniel A. Tellez Trujillo</span>
+        </div>
+    </footer>
+
+    <script src="main.js"></script>
+</body>
+</html>

@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <script>document.documentElement.classList.add('has-js');</script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TitanDrive · Catálogo del Repositorio</title>
+    <meta name="description" content="Catálogo completo de recursos de TitanDrive, organizado por categorías." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,600&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+    <canvas id="dust-canvas"></canvas>
+    <div class="grid-overlay"></div>
+    <div class="aurora"><span></span><span></span><span></span></div>
+
+    <header id="header">
+        <div class="container nav-bar">
+            <a href="index.html" class="logo">TitanDrive <span class="mark">Archivo</span></a>
+            <ul class="nav-links">
+                <li><a href="index.html#inicio" data-n="01">Inicio</a></li>
+                <li><a href="index.html#sobre" data-n="02">Sobre</a></li>
+                <li><a href="repositorio.html" data-n="03" class="active">Repositorio</a></li>
+                <li><a href="index.html#contacto" data-n="04">Contacto</a></li>
+            </ul>
+        </div>
+    </header>
+
+    <section id="repositorio">
+        <div class="container">
+            <p class="eyebrow reveal in-view">Catálogo completo</p>
+            <h2 class="section-title reveal in-view">Repositorio <em>TitanDrive</em></h2>
+            <p class="section-sub reveal in-view">Cada categoría es una ficha del archivo. Ábrela para ver sus registros.</p>
+
+            <div class="ledger reveal in-view" style="margin-top: 2.2rem;">
+                <div class="ledger-item">
+                    <span class="ledger-num"><span id="statCategories" data-count="0">0</span></span>
+                    <span class="ledger-label">Categorías</span>
+                </div>
+                <div class="ledger-item">
+                    <span class="ledger-num"><span id="statFiles" data-count="0">0</span></span>
+                    <span class="ledger-label">Archivos registrados</span>
+                </div>
+                <div class="ledger-item">
+                    <span class="ledger-num" style="font-size:1.3rem; margin-top:0.35rem;">Agosto 2026</span>
+                    <span class="ledger-label">Última actualización</span>
+                </div>
+            </div>
+
+            <!-- RECURSO DESTACADO -->
+            <div class="featured-resource reveal in-view" id="featuredResource"></div>
+
+            <!-- BUSCADOR -->
+            <div class="repo-toolbar reveal in-view">
+                <div class="search-wrap">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                    <input type="text" id="searchInput" placeholder="Buscar categoría o archivo…" autocomplete="off" />
+                </div>
+                <span class="result-count" id="resultCount"></span>
+            </div>
+
+            <!-- GRID DE CARPETAS -->
+            <div class="repo-grid" id="folderGrid" style="margin-top: 2rem;"></div>
+            <div class="empty-state" id="emptyState" style="display:none;">
+                <p class="glyph">Sin resultados</p>
+                <p>No hay categorías o archivos que coincidan con tu búsqueda. Prueba con otro término.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- MODAL -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+            <div class="modal-head">
+                <div class="icon-wrap" id="modalIcon">📁</div>
+                <div class="titles"><h2 id="modalTitle">Categoría</h2></div>
+                <button class="modal-close-x" id="modalCloseX" aria-label="Cerrar">✕</button>
+            </div>
+            <div id="modalContent"></div>
+            <div class="modal-foot">
+                <button class="modal-close" id="modalCloseBtn">Cerrar</button>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container" style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:0.8rem;">
+            <span class="brand"><b>TitanDrive</b> — archivo digital</span>
+            <span>Hecho por Daniel A. Tellez Trujillo</span>
+        </div>
+    </footer>
+
+    <script src="data.js"></script>
+    <script src="repo.js"></script>
+    <script src="main.js"></script>
+</body>
+</html>
