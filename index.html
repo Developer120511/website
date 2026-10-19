@@ -1,0 +1,1320 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="color-scheme" content="dark" />
+  <meta name="theme-color" content="#06080b" />
+  <title>TitanDrive · Archivo Digital</title>
+  <meta name="description" content="TitanDrive — catálogo y archivo digital de recursos y software, organizado por categorías." />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230a0d12'/%3E%3Crect x='3' y='3' width='58' height='58' rx='12' fill='none' stroke='%23c9a227' stroke-width='2'/%3E%3Ctext x='32' y='43' font-family='Georgia,serif' font-size='30' font-weight='700' fill='%23e8cd6a' text-anchor='middle'%3ETd%3C/text%3E%3C/svg%3E" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,600&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+/* ============================================================
+   TitanDrive · Archivo Digital — hoja de estilo principal
+   Rediseño completo: tema oscuro de archivo, partículas,
+   auroras, animaciones de revelado y tarjetas de repositorio.
+   ============================================================ */
+
+/* ---------- Tokens ---------- */
+:root{
+  --bg:#06080b;
+  --bg-2:#0a0d12;
+  --panel:rgba(16,20,26,.72);
+  --panel-solid:#0f1319;
+  --panel-2:rgba(22,27,35,.66);
+  --line:rgba(201,162,39,.16);
+  --line-soft:rgba(255,255,255,.07);
+  --gold:#c9a227;
+  --gold-2:#e8cd6a;
+  --gold-3:#8f7318;
+  --teal:#5fd0c4;
+  --text:#e9eef5;
+  --muted:#8d9aab;
+  --muted-2:#5f6b7a;
+  --ok:#69d68f;
+  --warn:#e0a34a;
+  --danger:#e2685e;
+  --radius:16px;
+  --radius-sm:11px;
+  --shadow:0 24px 70px -30px rgba(0,0,0,.95);
+  --glow:0 0 0 1px rgba(201,162,39,.18), 0 30px 80px -40px rgba(201,162,39,.35);
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  --serif:"Fraunces",Georgia,"Times New Roman",serif;
+  --sans:"Inter",system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+  --ease:cubic-bezier(.22,.61,.36,1);
+  --maxw:1180px;
+  --nav-h:78px;
+}
+
+/* ---------- Reset ---------- */
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family:var(--sans);
+  font-size:16px;
+  line-height:1.65;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+  min-height:100vh;
+}
+body.is-locked{overflow:hidden}
+img,svg{display:block;max-width:100%}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+input{font:inherit}
+h1,h2,h3,h4,p{margin:0}
+ul{margin:0;padding:0;list-style:none}
+::selection{background:rgba(201,162,39,.3);color:#fff}
+
+/* scrollbar */
+*::-webkit-scrollbar{width:11px;height:11px}
+*::-webkit-scrollbar-track{background:#0a0d12}
+*::-webkit-scrollbar-thumb{background:linear-gradient(180deg,#3a3320,#1d1a12);border-radius:20px;border:2px solid #0a0d12}
+*::-webkit-scrollbar-thumb:hover{background:linear-gradient(180deg,#6d5c20,#2c2615)}
+
+.container{width:min(100% - 2.6rem,var(--maxw));margin-inline:auto}
+
+/* ---------- Fondo: capas ---------- */
+.fx-layer{position:fixed;inset:0;pointer-events:none}
+#dust-canvas{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.9}
+
+.grid-overlay{
+  z-index:1;
+  background-image:linear-gradient(rgba(201,162,39,.07) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(201,162,39,.07) 1px,transparent 1px);
+  background-size:64px 64px;
+  -webkit-mask-image:radial-gradient(ellipse 80% 70% at 50% 0%,#000 0%,transparent 78%);
+          mask-image:radial-gradient(ellipse 80% 70% at 50% 0%,#000 0%,transparent 78%);
+  animation:gridDrift 26s linear infinite;
+}
+@keyframes gridDrift{from{background-position:0 0}to{background-position:64px 64px}}
+
+.noise{
+  z-index:2;opacity:.28;mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='.5'/%3E%3C/svg%3E");
+}
+
+.aurora{z-index:0;overflow:hidden;filter:blur(70px);opacity:.6}
+.aurora span{position:absolute;display:block;border-radius:50%;animation:float 22s ease-in-out infinite}
+.aurora span:nth-child(1){width:52vw;height:52vw;left:-12vw;top:-14vw;background:radial-gradient(circle,rgba(201,162,39,.32),transparent 66%)}
+.aurora span:nth-child(2){width:44vw;height:44vw;right:-10vw;top:6vh;background:radial-gradient(circle,rgba(95,208,196,.18),transparent 66%);animation-delay:-7s}
+.aurora span:nth-child(3){width:46vw;height:46vw;left:26vw;bottom:-22vw;background:radial-gradient(circle,rgba(120,90,200,.16),transparent 66%);animation-delay:-13s}
+@keyframes float{
+  0%,100%{transform:translate3d(0,0,0) scale(1)}
+  33%{transform:translate3d(4vw,3vh,0) scale(1.09)}
+  66%{transform:translate3d(-3vw,-2vh,0) scale(.95)}
+}
+
+.spotlight{
+  z-index:3;
+  background:radial-gradient(420px circle at var(--mx,50%) var(--my,12%),rgba(201,162,39,.10),transparent 62%);
+  transition:opacity .4s ease;
+}
+
+/* ---------- Preloader ---------- */
+#preloader{
+  position:fixed;inset:0;z-index:9999;display:grid;place-items:center;
+  background:radial-gradient(ellipse at 50% 40%,#0d1117,#05070a 70%);
+  transition:opacity .6s var(--ease),visibility .6s;
+}
+#preloader.done{opacity:0;visibility:hidden}
+.pl-inner{display:grid;justify-items:center;gap:1.1rem;text-align:center}
+.pl-mark{
+  width:74px;height:74px;border-radius:20px;display:grid;place-items:center;
+  font-family:var(--serif);font-size:1.9rem;font-weight:700;color:#0b0d11;
+  background:linear-gradient(145deg,var(--gold-2),var(--gold-3));
+  box-shadow:0 0 0 1px rgba(255,255,255,.14),0 24px 60px -24px rgba(201,162,39,.75);
+  animation:plPulse 1.7s var(--ease) infinite;
+}
+@keyframes plPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.07) rotate(-2deg)}}
+.pl-name{font-family:var(--mono);font-size:.74rem;letter-spacing:.42em;text-transform:uppercase;color:var(--gold)}
+.pl-bar{width:210px;height:2px;background:rgba(255,255,255,.09);border-radius:9px;overflow:hidden}
+.pl-bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--gold-3),var(--gold-2));animation:plLoad 1.5s var(--ease) forwards}
+@keyframes plLoad{to{width:100%}}
+.pl-log{font-family:var(--mono);font-size:.68rem;color:var(--muted-2);letter-spacing:.12em}
+
+/* ---------- Scroll progress ---------- */
+#scrollProgress{
+  position:fixed;top:0;left:0;height:2px;width:0;z-index:999;
+  background:linear-gradient(90deg,var(--gold-3),var(--gold-2),var(--teal));
+  box-shadow:0 0 14px rgba(201,162,39,.7);
+}
+
+/* ---------- Header ---------- */
+#header{
+  position:sticky;top:0;z-index:800;
+  transition:background .45s var(--ease),border-color .45s var(--ease),backdrop-filter .45s;
+  border-bottom:1px solid transparent;
+}
+#header.scrolled{
+  background:rgba(7,9,13,.78);
+  border-bottom-color:var(--line-soft);
+  -webkit-backdrop-filter:blur(16px) saturate(150%);
+          backdrop-filter:blur(16px) saturate(150%);
+}
+.nav-bar{display:flex;align-items:center;justify-content:space-between;gap:1.2rem;min-height:var(--nav-h)}
+.logo{
+  display:inline-flex;align-items:baseline;gap:.55rem;
+  font-family:var(--serif);font-weight:700;font-size:1.28rem;letter-spacing:.01em;
+}
+.logo .mark{
+  font-family:var(--mono);font-size:.6rem;font-weight:600;letter-spacing:.28em;
+  text-transform:uppercase;color:var(--gold);
+  border:1px solid var(--line);border-radius:999px;padding:.24rem .6rem;
+  background:rgba(201,162,39,.07);
+}
+.logo::before{
+  content:"";width:9px;height:9px;border-radius:3px;transform:rotate(45deg);
+  background:linear-gradient(145deg,var(--gold-2),var(--gold-3));
+  box-shadow:0 0 14px rgba(201,162,39,.85);align-self:center;
+}
+.nav-links{display:flex;align-items:center;gap:.3rem}
+.nav-links a{
+  position:relative;display:inline-flex;align-items:center;gap:.5rem;
+  font-size:.9rem;font-weight:500;color:var(--muted);
+  padding:.55rem .85rem;border-radius:10px;transition:color .3s,background .3s;
+}
+.nav-links a::before{
+  content:attr(data-n);font-family:var(--mono);font-size:.58rem;color:var(--gold-3);
+  letter-spacing:.08em;transition:color .3s;
+}
+.nav-links a::after{
+  content:"";position:absolute;left:.85rem;right:.85rem;bottom:.28rem;height:1px;
+  background:linear-gradient(90deg,var(--gold),transparent);transform:scaleX(0);
+  transform-origin:left;transition:transform .4s var(--ease);
+}
+.nav-links a:hover,.nav-links a.active{color:var(--text);background:rgba(255,255,255,.035)}
+.nav-links a:hover::before,.nav-links a.active::before{color:var(--gold)}
+.nav-links a:hover::after,.nav-links a.active::after{transform:scaleX(1)}
+.nav-toggle{display:none;width:42px;height:38px;border:1px solid var(--line-soft);border-radius:10px;position:relative}
+.nav-toggle i{position:absolute;left:11px;right:11px;height:1.5px;background:var(--text);transition:.35s var(--ease)}
+.nav-toggle i:nth-child(1){top:13px}
+.nav-toggle i:nth-child(2){top:18.5px}
+.nav-toggle i:nth-child(3){top:24px}
+.nav-toggle.open i:nth-child(1){transform:translateY(5.5px) rotate(45deg)}
+.nav-toggle.open i:nth-child(2){opacity:0}
+.nav-toggle.open i:nth-child(3){transform:translateY(-5.5px) rotate(-45deg)}
+
+/* ---------- Tipografía de sección ---------- */
+main{position:relative;z-index:5}
+section{padding:clamp(4.2rem,9vw,7.4rem) 0;position:relative}
+.eyebrow{
+  font-family:var(--mono);font-size:.68rem;font-weight:600;letter-spacing:.34em;
+  text-transform:uppercase;color:var(--gold);display:inline-flex;align-items:center;gap:.65rem;
+  margin-bottom:1rem;
+}
+.eyebrow::before{content:"";width:26px;height:1px;background:linear-gradient(90deg,var(--gold),transparent)}
+.section-title{
+  font-family:var(--serif);font-weight:600;line-height:1.04;letter-spacing:-.02em;
+  font-size:clamp(2rem,5.2vw,3.6rem);margin-bottom:1.1rem;
+}
+.section-title em{
+  font-style:italic;color:transparent;
+  background:linear-gradient(100deg,var(--gold-2),var(--gold),var(--gold-3));
+  -webkit-background-clip:text;background-clip:text;
+}
+.section-text,.section-sub{
+  color:var(--muted);max-width:62ch;font-size:1.03rem;
+}
+.section-sub{margin-bottom:.4rem}
+
+/* ---------- Botones ---------- */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:.6rem;
+  font-size:.92rem;font-weight:600;letter-spacing:.01em;
+  padding:.86rem 1.5rem;border-radius:12px;
+  border:1px solid var(--line-soft);position:relative;overflow:hidden;
+  transition:transform .3s var(--ease),border-color .3s,box-shadow .35s,background .3s;
+  white-space:nowrap;
+}
+.btn:hover{transform:translateY(-2px)}
+.btn:active{transform:translateY(0)}
+.btn-primary{
+  color:#0a0c10;border-color:transparent;
+  background:linear-gradient(135deg,var(--gold-2),var(--gold) 55%,var(--gold-3));
+  box-shadow:0 16px 40px -20px rgba(201,162,39,.95);
+}
+.btn-primary:hover{box-shadow:0 22px 54px -20px rgba(201,162,39,1)}
+.btn-ghost{color:var(--text);background:rgba(255,255,255,.03)}
+.btn-ghost:hover{border-color:var(--line);background:rgba(201,162,39,.08)}
+.btn .arw{transition:transform .35s var(--ease)}
+.btn:hover .arw{transform:translateX(4px)}
+.btn-sm{padding:.55rem 1rem;font-size:.82rem;border-radius:10px}
+
+/* ---------- Hero ---------- */
+.hero{padding-top:clamp(3rem,7vw,5.4rem);overflow:hidden}
+.hero-top{display:grid;grid-template-columns:auto 1fr;gap:clamp(1.4rem,4vw,3.4rem);align-items:center}
+.lede{color:var(--muted);font-size:clamp(1rem,1.6vw,1.13rem);max-width:64ch;margin-top:1.5rem}
+.hero-actions{display:flex;flex-wrap:wrap;gap:.85rem;margin-top:2rem}
+
+/* sello giratorio */
+.stamp{position:relative;width:clamp(120px,17vw,178px);height:clamp(120px,17vw,178px);flex:none}
+.stamp svg{width:100%;height:100%;animation:spin 34s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.stamp .stamp-center{position:absolute;inset:0;display:grid;place-content:center;justify-items:center;gap:.1rem}
+.stamp .glyph{
+  font-family:var(--serif);font-size:clamp(1.4rem,3vw,2rem);font-weight:700;
+  background:linear-gradient(140deg,var(--gold-2),var(--gold-3));
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.stamp .sub{font-family:var(--mono);font-size:.54rem;letter-spacing:.24em;color:var(--muted-2);text-transform:uppercase}
+
+/* ---------- Ledger / stats ---------- */
+.ledger{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));
+  margin-top:clamp(2.6rem,6vw,4rem);
+  border:1px solid var(--line-soft);border-radius:var(--radius);
+  background:linear-gradient(180deg,rgba(16,20,26,.7),rgba(10,13,17,.5));
+  -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);
+  overflow:hidden;
+}
+.ledger-item{padding:1.5rem 1.6rem;border-right:1px solid var(--line-soft);position:relative}
+.ledger-item:last-child{border-right:0}
+.ledger-item::after{
+  content:"";position:absolute;left:1.6rem;bottom:1.1rem;width:26px;height:2px;
+  background:linear-gradient(90deg,var(--gold),transparent);opacity:.75;
+}
+.ledger-num{
+  display:block;font-family:var(--serif);font-weight:600;font-size:clamp(1.9rem,3.4vw,2.5rem);
+  line-height:1;letter-spacing:-.02em;
+}
+.ledger-label{display:block;margin-top:.7rem;font-family:var(--mono);font-size:.66rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted-2)}
+
+/* ---------- Feature cards ---------- */
+.feature-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:1.1rem;margin-top:2.6rem}
+.feature-card{
+  position:relative;padding:1.8rem 1.6rem;border-radius:var(--radius);
+  border:1px solid var(--line-soft);
+  background:linear-gradient(165deg,rgba(18,23,30,.72),rgba(9,12,16,.62));
+  overflow:hidden;transition:transform .45s var(--ease),border-color .4s,box-shadow .45s;
+}
+.feature-card::before{
+  content:"";position:absolute;inset:0;opacity:0;transition:opacity .45s;
+  background:radial-gradient(420px circle at var(--cx,50%) var(--cy,0%),rgba(201,162,39,.13),transparent 60%);
+}
+.feature-card::after{
+  content:"";position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,var(--gold),transparent);
+  transform:scaleX(0);transition:transform .5s var(--ease);
+}
+.feature-card:hover{transform:translateY(-6px);border-color:var(--line);box-shadow:var(--glow)}
+.feature-card:hover::before{opacity:1}
+.feature-card:hover::after{transform:scaleX(1)}
+.feature-card .num{
+  font-family:var(--mono);font-size:.68rem;letter-spacing:.24em;color:var(--gold);
+  display:block;margin-bottom:1.1rem;
+}
+.feature-card h3{font-family:var(--serif);font-size:1.24rem;font-weight:600;margin-bottom:.6rem}
+.feature-card p{color:var(--muted);font-size:.95rem}
+
+/* ---------- Contacto ---------- */
+.contact-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1rem;margin-top:2.2rem}
+.contact-item{
+  display:flex;align-items:center;justify-content:space-between;gap:1rem;
+  padding:1.35rem 1.5rem;border-radius:var(--radius);border:1px solid var(--line-soft);
+  background:var(--panel);transition:transform .35s var(--ease),border-color .35s,background .35s;
+}
+.contact-item:hover{transform:translateY(-4px);border-color:var(--line);background:rgba(201,162,39,.07)}
+.contact-item .tag{
+  display:block;font-family:var(--mono);font-size:.62rem;letter-spacing:.24em;
+  text-transform:uppercase;color:var(--gold);margin-bottom:.35rem;
+}
+.contact-item::after{
+  content:"↗";font-size:1.1rem;color:var(--muted-2);transition:transform .35s var(--ease),color .35s;
+}
+.contact-item:hover::after{transform:translate(3px,-3px);color:var(--gold)}
+
+/* ---------- Repositorio ---------- */
+.repo-toolbar{
+  display:flex;align-items:center;gap:1rem;flex-wrap:wrap;
+  margin-top:2.4rem;padding:1rem;border-radius:var(--radius);
+  border:1px solid var(--line-soft);background:var(--panel);
+  -webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);
+}
+.search-wrap{flex:1 1 260px;display:flex;align-items:center;gap:.7rem;padding:.7rem 1rem;border-radius:11px;border:1px solid var(--line-soft);background:rgba(0,0,0,.32);transition:border-color .3s,box-shadow .3s}
+.search-wrap:focus-within{border-color:var(--line);box-shadow:0 0 0 4px rgba(201,162,39,.09)}
+.search-wrap svg{color:var(--muted-2);flex:none}
+.search-wrap input{flex:1;min-width:0;background:none;border:0;outline:0;color:var(--text);font-size:.94rem}
+.search-wrap input::placeholder{color:var(--muted-2)}
+.result-count{font-family:var(--mono);font-size:.7rem;letter-spacing:.14em;color:var(--muted-2);text-transform:uppercase;padding-right:.4rem}
+
+.repo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(272px,1fr));gap:1.15rem}
+.repo-card{
+  position:relative;display:flex;flex-direction:column;gap:1.05rem;
+  padding:1.55rem 1.5rem 1.35rem;border-radius:var(--radius);
+  border:1px solid var(--line-soft);
+  background:linear-gradient(165deg,rgba(18,23,30,.74),rgba(9,12,16,.66));
+  overflow:hidden;text-align:left;cursor:pointer;
+  transition:transform .45s var(--ease),border-color .4s,box-shadow .45s;
+}
+.repo-card::before{
+  content:"";position:absolute;inset:0;opacity:0;transition:opacity .45s;
+  background:radial-gradient(360px circle at var(--cx,50%) var(--cy,0%),rgba(201,162,39,.14),transparent 62%);
+}
+.repo-card::after{
+  content:"";position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,var(--gold-3),var(--gold-2),var(--teal));
+  transform:scaleX(0);transform-origin:left;transition:transform .55s var(--ease);
+}
+.repo-card:hover{transform:translateY(-7px);border-color:var(--line);box-shadow:var(--glow)}
+.repo-card:hover::before{opacity:1}
+.repo-card:hover::after{transform:scaleX(1)}
+.repo-card>*{position:relative}
+.repo-card-top{display:flex;align-items:center;justify-content:space-between;gap:.9rem}
+.monogram{
+  width:52px;height:52px;flex:none;border-radius:14px;display:grid;place-items:center;
+  font-family:var(--mono);font-size:.86rem;font-weight:600;letter-spacing:.06em;color:var(--gold-2);
+  border:1px solid var(--line);
+  background:linear-gradient(150deg,rgba(201,162,39,.2),rgba(201,162,39,.04));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.08);
+  transition:transform .45s var(--ease),box-shadow .45s;
+}
+.repo-card:hover .monogram{transform:rotate(-6deg) scale(1.05);box-shadow:0 0 26px -6px rgba(201,162,39,.6)}
+.count-badge{
+  font-family:var(--mono);font-size:.66rem;letter-spacing:.14em;color:var(--muted);
+  border:1px solid var(--line-soft);border-radius:999px;padding:.3rem .68rem;
+  background:rgba(0,0,0,.28);white-space:nowrap;
+}
+.repo-card h3{font-family:var(--serif);font-size:1.24rem;font-weight:600;line-height:1.2}
+.repo-card p{color:var(--muted);font-size:.92rem;flex:1}
+.repo-icon{
+  width:54px;height:54px;flex:none;border-radius:15px;display:grid;place-items:center;
+  font-size:1.55rem;line-height:1;
+  border:1px solid var(--line);
+  background:linear-gradient(150deg,rgba(201,162,39,.2),rgba(201,162,39,.04));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.08);
+  transition:transform .45s var(--ease),box-shadow .45s;
+}
+.repo-card:hover .repo-icon{transform:rotate(-6deg) scale(1.06);box-shadow:0 0 26px -6px rgba(201,162,39,.6)}
+.count-badge.soon{color:var(--warn);border-color:rgba(224,163,74,.35);background:rgba(224,163,74,.08)}
+.repo-card-foot .open{color:var(--gold)}
+.featured-main{display:block}
+.repo-card-foot{
+  display:flex;align-items:center;justify-content:space-between;gap:.8rem;
+  padding-top:1rem;border-top:1px solid var(--line-soft);
+}
+.repo-card-foot .open{
+  font-family:var(--mono);font-size:.68rem;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);
+}
+.repo-card-foot .arrow{color:var(--muted-2);transition:transform .4s var(--ease),color .4s}
+.repo-card:hover .arrow{transform:translateX(5px);color:var(--gold-2)}
+
+/* destacado */
+.featured-resource{margin-top:1.4rem}
+.featured-card{
+  position:relative;border-radius:var(--radius);overflow:hidden;
+  border:1px solid var(--line);
+  background:linear-gradient(120deg,rgba(201,162,39,.13),rgba(16,20,26,.72) 42%,rgba(9,12,16,.7));
+  padding:clamp(1.6rem,4vw,2.6rem);
+  display:grid;grid-template-columns:1fr auto;gap:1.6rem;align-items:center;
+}
+.featured-card::after{
+  content:"";position:absolute;top:-40%;right:-8%;width:340px;height:340px;border-radius:50%;
+  background:radial-gradient(circle,rgba(201,162,39,.22),transparent 68%);filter:blur(30px);
+  animation:float 16s ease-in-out infinite;
+}
+.featured-card>*{position:relative;z-index:1}
+.featured-tag{
+  display:inline-flex;align-items:center;gap:.5rem;font-family:var(--mono);font-size:.64rem;
+  letter-spacing:.24em;text-transform:uppercase;color:var(--gold);
+  border:1px solid var(--line);border-radius:999px;padding:.3rem .8rem;
+  background:rgba(0,0,0,.3);margin-bottom:1rem;
+}
+.featured-tag::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--gold);box-shadow:0 0 10px var(--gold);animation:blink 1.8s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.25}}
+.featured-card h3{font-family:var(--serif);font-size:clamp(1.4rem,3vw,2rem);font-weight:600;margin-bottom:.5rem}
+.featured-card p{color:var(--muted);font-size:.96rem;max-width:52ch}
+.featured-meta{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:1.1rem}
+.chip{
+  font-family:var(--mono);font-size:.64rem;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--muted);border:1px solid var(--line-soft);border-radius:999px;padding:.28rem .7rem;
+  background:rgba(0,0,0,.26);
+}
+
+/* estado vacío */
+.empty-state{
+  text-align:center;padding:4rem 1.5rem;border:1px dashed var(--line-soft);
+  border-radius:var(--radius);background:rgba(16,20,26,.5);margin-top:2rem;
+}
+.empty-state .glyph{font-family:var(--serif);font-size:1.4rem;color:var(--gold);margin-bottom:.5rem}
+.empty-state p{color:var(--muted)}
+
+/* ---------- Modal ---------- */
+.modal-overlay{
+  position:fixed;inset:0;z-index:1000;display:grid;place-items:center;padding:1.2rem;
+  background:rgba(4,6,9,.72);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);
+  opacity:0;visibility:hidden;transition:opacity .35s var(--ease),visibility .35s;
+}
+.modal-overlay.open{opacity:1;visibility:visible}
+.modal-box{
+  width:min(100%,680px);max-height:min(86vh,860px);overflow:auto;
+  border-radius:18px;border:1px solid var(--line);
+  background:linear-gradient(180deg,#111620,#0a0d12);
+  box-shadow:var(--shadow);transform:translateY(18px) scale(.97);
+  transition:transform .4s var(--ease);
+}
+.modal-overlay.open .modal-box{transform:translateY(0) scale(1)}
+.modal-head{
+  display:flex;align-items:center;gap:1rem;padding:1.4rem 1.5rem;
+  border-bottom:1px solid var(--line-soft);position:sticky;top:0;z-index:2;
+  background:linear-gradient(180deg,rgba(17,22,32,.98),rgba(13,17,24,.96));
+  -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);
+}
+.modal-head .icon-wrap{
+  width:50px;height:50px;flex:none;border-radius:14px;display:grid;place-items:center;
+  font-size:1.45rem;line-height:1;color:var(--gold-2);
+  border:1px solid var(--line);background:linear-gradient(150deg,rgba(201,162,39,.2),rgba(201,162,39,.05));
+}
+.modal-head .titles{flex:1;min-width:0}
+.modal-head h2{font-family:var(--serif);font-size:1.32rem;font-weight:600;line-height:1.2}
+.modal-head h2 .code{
+  display:inline-block;font-family:var(--mono);font-size:.62rem;font-weight:600;letter-spacing:.16em;
+  color:var(--gold);border:1px solid var(--line);border-radius:999px;padding:.2rem .6rem;
+  margin-right:.6rem;vertical-align:middle;background:rgba(201,162,39,.07);
+}
+.modal-empty{color:var(--muted);text-align:center;padding:2.4rem 1rem}
+@keyframes rowIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+#modalContent .file-row{animation:rowIn .5s var(--ease) backwards}
+.modal-head .desc{color:var(--muted);font-size:.85rem;margin-top:.2rem}
+.modal-close-x{
+  width:36px;height:36px;flex:none;border-radius:10px;border:1px solid var(--line-soft);
+  color:var(--muted);font-size:.95rem;transition:.3s;
+}
+.modal-close-x:hover{color:var(--text);border-color:var(--line);background:rgba(201,162,39,.1);transform:rotate(90deg)}
+#modalContent{padding:1.3rem 1.5rem}
+.file-row{
+  display:flex;align-items:center;gap:1rem;padding:.9rem 1rem;border-radius:12px;
+  border:1px solid var(--line-soft);background:rgba(255,255,255,.018);
+  margin-bottom:.6rem;transition:border-color .3s,background .3s,transform .3s var(--ease);
+}
+.file-row:hover{border-color:var(--line);background:rgba(201,162,39,.07);transform:translateX(3px)}
+.file-icon{
+  width:38px;height:38px;flex:none;border-radius:10px;display:grid;place-items:center;
+  font-family:var(--mono);font-size:.6rem;font-weight:600;letter-spacing:.04em;color:var(--gold);
+  border:1px solid var(--line-soft);background:rgba(0,0,0,.34);
+}
+.file-info{flex:1;min-width:0}
+.file-name{font-size:.94rem;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.file-meta{display:flex;flex-wrap:wrap;gap:.55rem;margin-top:.22rem}
+.file-meta span{font-family:var(--mono);font-size:.64rem;color:var(--muted-2);letter-spacing:.06em}
+.file-meta span:not(:last-child)::after{content:"·";margin-left:.55rem;color:var(--muted-2)}
+.file-dl{
+  flex:none;font-family:var(--mono);font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--gold);border:1px solid var(--line);border-radius:9px;padding:.45rem .8rem;
+  background:rgba(201,162,39,.07);transition:.3s;white-space:nowrap;
+}
+.file-dl:hover{background:var(--gold);color:#0a0c10;border-color:transparent}
+.modal-foot{padding:1rem 1.5rem 1.4rem;display:flex;justify-content:flex-end}
+.modal-close{
+  padding:.62rem 1.2rem;border-radius:10px;border:1px solid var(--line-soft);
+  font-size:.86rem;color:var(--muted);transition:.3s;
+}
+.modal-close:hover{color:var(--text);border-color:var(--line);background:rgba(201,162,39,.08)}
+
+/* ---------- Toast ---------- */
+#toast{
+  position:fixed;left:50%;bottom:26px;z-index:1200;transform:translate(-50%,26px);
+  padding:.85rem 1.25rem;border-radius:12px;border:1px solid var(--line);
+  background:rgba(14,18,24,.96);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);
+  color:var(--text);font-size:.88rem;box-shadow:var(--shadow);
+  opacity:0;visibility:hidden;transition:.4s var(--ease);max-width:min(92vw,480px);text-align:center;
+}
+#toast.show{opacity:1;visibility:visible;transform:translate(-50%,0)}
+
+/* ---------- Footer ---------- */
+footer{
+  position:relative;z-index:5;margin-top:2rem;padding:2.2rem 0;
+  border-top:1px solid var(--line-soft);
+  background:linear-gradient(180deg,transparent,rgba(9,12,16,.8));
+}
+footer .container{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.9rem}
+footer .brand{color:var(--muted);font-size:.9rem}
+footer .brand b{color:var(--text);font-family:var(--serif)}
+footer .made{font-family:var(--mono);font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted-2)}
+
+/* ---------- Back to top ---------- */
+#toTop{
+  position:fixed;right:22px;bottom:24px;z-index:900;width:46px;height:46px;border-radius:13px;
+  display:grid;place-items:center;border:1px solid var(--line);
+  background:rgba(14,18,24,.9);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);
+  color:var(--gold);opacity:0;visibility:hidden;transform:translateY(14px);
+  transition:.4s var(--ease);
+}
+#toTop.show{opacity:1;visibility:visible;transform:translateY(0)}
+#toTop:hover{background:var(--gold);color:#0a0c10}
+
+/* ---------- Reveal ---------- */
+.reveal{opacity:0;transform:translateY(26px);transition:opacity .8s var(--ease),transform .8s var(--ease)}
+.reveal.in-view{opacity:1;transform:none}
+.no-js .reveal,.reveal.no-anim{opacity:1;transform:none}
+.is-visible-stagger>*{opacity:0;transform:translateY(26px)}
+.is-visible-stagger.in-view>*{opacity:1;transform:none;transition:opacity .75s var(--ease),transform .75s var(--ease)}
+
+/* ---------- Responsive ---------- */
+@media (max-width:920px){
+  .hero-top{grid-template-columns:1fr;gap:1.6rem}
+  .stamp{order:-1;width:120px;height:120px}
+  .featured-card{grid-template-columns:1fr}
+}
+@media (max-width:760px){
+  .nav-toggle{display:block}
+  .nav-links{
+    position:fixed;inset:var(--nav-h) 0 auto 0;flex-direction:column;align-items:stretch;gap:.15rem;
+    padding:1rem 1.3rem 1.5rem;background:rgba(8,11,15,.97);
+    -webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);
+    border-bottom:1px solid var(--line-soft);
+    transform:translateY(-140%);transition:transform .45s var(--ease);max-height:calc(100vh - var(--nav-h));overflow:auto;
+  }
+  .nav-links.open{transform:translateY(0)}
+  .nav-links a{padding:.9rem 1rem;font-size:1rem}
+  .nav-links a::after{display:none}
+  .ledger-item{border-right:0;border-bottom:1px solid var(--line-soft)}
+  .ledger-item:last-child{border-bottom:0}
+  footer .container{justify-content:center;text-align:center}
+}
+@media (max-width:520px){
+  .container{width:min(100% - 1.8rem,var(--maxw))}
+  .repo-grid{grid-template-columns:1fr}
+  .file-row{flex-wrap:wrap}
+  .file-dl{width:100%;text-align:center}
+}
+
+/* ---------- Accesibilidad / motion ---------- */
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}
+  html{scroll-behavior:auto}
+  .reveal{opacity:1;transform:none}
+}
+:focus-visible{outline:2px solid var(--gold);outline-offset:3px;border-radius:6px}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+</style>
+</head>
+<body>
+  <script>document.documentElement.classList.remove("no-js");</script>
+
+  <!-- Preloader -->
+  <div id="preloader" role="status" aria-live="polite" aria-label="Cargando el archivo digital">
+    <div class="pl-inner">
+      <div class="pl-mark">Td</div>
+      <div class="pl-name">TitanDrive</div>
+      <div class="pl-bar"><i></i></div>
+      <div class="pl-log">Iniciando archivo digital…</div>
+    </div>
+  </div>
+
+  <!-- Capas de fondo -->
+  <div class="fx-layer aurora" aria-hidden="true"><span></span><span></span><span></span></div>
+  <canvas id="dust-canvas" aria-hidden="true"></canvas>
+  <div class="fx-layer grid-overlay" aria-hidden="true"></div>
+  <div class="fx-layer noise" aria-hidden="true"></div>
+  <div class="fx-layer spotlight" aria-hidden="true"></div>
+
+  <div id="scrollProgress" aria-hidden="true"></div>
+
+  <!-- Header -->
+  <header id="header">
+    <div class="container nav-bar">
+      <a href="index.html" class="logo" aria-label="TitanDrive, ir al inicio">TitanDrive <span class="mark">Archivo</span></a>
+      <button class="nav-toggle" id="navToggle" aria-label="Abrir menú" aria-expanded="false" aria-controls="navLinks">
+        <i></i><i></i><i></i>
+      </button>
+      <nav>
+        <ul class="nav-links" id="navLinks">
+          <li><a href="index.html#inicio" data-n="01" class="active">Inicio</a></li>
+          <li><a href="index.html#sobre" data-n="02">Sobre</a></li>
+          <li><a href="repositorio.html" data-n="03">Repositorio</a></li>
+          <li><a href="repositorio.html#herramientas" data-n="04">Herramientas</a></li>
+          <li><a href="index.html#contacto" data-n="05">Contacto</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- INICIO -->
+    <section id="inicio" class="hero">
+      <div class="container">
+        <div class="hero-top">
+          <div class="stamp reveal in-view" aria-hidden="true">
+            <svg viewBox="0 0 200 200">
+              <defs>
+                <path id="circlePath" d="M 100,100 m -82,0 a 82,82 0 1,1 164,0 a 82,82 0 1,1 -164,0" />
+              </defs>
+              <circle cx="100" cy="100" r="82" fill="none" stroke="rgba(201,162,39,0.32)" stroke-width="1" />
+              <circle cx="100" cy="100" r="68" fill="none" stroke="rgba(201,162,39,0.16)" stroke-width="1" />
+              <text font-family="IBM Plex Mono, monospace" font-size="10.5" letter-spacing="3" fill="#c9a227">
+                <textPath href="#circlePath" startOffset="0%">ARCHIVO DIGITAL · CATÁLOGO VERIFICADO · </textPath>
+              </text>
+            </svg>
+            <div class="stamp-center">
+              <span class="glyph">Td</span>
+              <span class="sub">Est. 2026</span>
+            </div>
+          </div>
+          <div>
+            <p class="eyebrow reveal in-view">Repositorio digital</p>
+            <h1 class="section-title reveal in-view">Un archivo, no<br>un montón de <em>enlaces</em>.</h1>
+          </div>
+        </div>
+
+        <p class="lede reveal in-view">
+          TitanDrive organiza software y recursos en un catálogo con categorías, fichas y
+          control de versión — cada elemento con su propio registro, listo para consultar
+          o descargar en segundos.
+        </p>
+
+        <div class="hero-actions reveal in-view">
+          <a href="repositorio.html" class="btn btn-primary">Explorar el repositorio <span class="arw">→</span></a>
+          <a href="#sobre" class="btn btn-ghost">Cómo funciona</a>
+        </div>
+
+        <div class="ledger reveal">
+          <div class="ledger-item">
+            <span class="ledger-num"><span id="statCategoriesHome" data-count="11">0</span></span>
+            <span class="ledger-label">Categorías activas</span>
+          </div>
+          <div class="ledger-item">
+            <span class="ledger-num"><span id="statFilesHome" data-count="45">0</span></span>
+            <span class="ledger-label">Recursos catalogados</span>
+          </div>
+          <div class="ledger-item">
+            <span class="ledger-num" style="font-size:1.5rem;"><span id="metaUpdated">2026</span></span>
+            <span class="ledger-label">Última actualización</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SOBRE -->
+    <section id="sobre">
+      <div class="container">
+        <p class="eyebrow reveal">Sobre el archivo</p>
+        <h2 class="section-title reveal">Cómo está organizado</h2>
+        <p class="section-text reveal">
+          Cada recurso vive dentro de una categoría con su propia ficha: nombre, versión,
+          tamaño y enlace directo. Nada de carpetas sueltas ni búsquedas interminables —
+          el objetivo es que encuentres lo que necesitas y salgas con el archivo en mano.
+        </p>
+
+        <div class="feature-row reveal">
+          <div class="feature-card">
+            <span class="num">01</span>
+            <h3>Catalogado por categoría</h3>
+            <p>Software, frameworks, utilidades y más — cada uno en su propio apartado, sin mezclar.</p>
+          </div>
+          <div class="feature-card">
+            <span class="num">02</span>
+            <h3>Verificado y vigente</h3>
+            <p>Las fichas se revisan y actualizan; si un enlace deja de servir, se reemplaza.</p>
+          </div>
+          <div class="feature-card">
+            <span class="num">03</span>
+            <h3>Acceso directo</h3>
+            <p>Sin registros ni esperas. Abres la categoría, eliges el archivo y descargas.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTACTO -->
+    <section id="contacto">
+      <div class="container">
+        <p class="eyebrow reveal">Contacto</p>
+        <h2 class="section-title reveal">¿Falta algo en el archivo?</h2>
+        <p class="section-text reveal">
+          Si buscas un recurso que no está catalogado, o encontraste un enlace caído, escríbenos.
+        </p>
+        <div class="contact-list reveal">
+          <a href="mailto:apexsolutions1205@gmail.com" class="contact-item">
+            <span>
+              <span class="tag">Correo</span>
+              apexsolutions1205@gmail.com
+            </span>
+          </a>
+          <a href="https://wa.me/5355857689" target="_blank" rel="noopener" class="contact-item">
+            <span>
+              <span class="tag">WhatsApp</span>
+              +53 5585 7689
+            </span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    <div class="container">
+      <span class="brand"><b>TitanDrive</b> — archivo digital</span>
+      <span class="made">Hecho por Daniel A. Tellez Trujillo</span>
+    </div>
+  </footer>
+
+  <button id="toTop" aria-label="Volver arriba">
+    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5"/><path d="M5 12l7-7 7 7"/></svg>
+  </button>
+
+  <div id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+/* =========================================================
+   TitanDrive — datos del catálogo
+   Copiado literal del data.js original: mismos enlaces,
+   ninguna adición ni eliminación.
+   ========================================================= */
+window.TITANDRIVE_SITE = {
+  name: 'TitanDrive',
+  updated: 'Agosto 2026'
+};
+
+window.TITANDRIVE_FEATURED = {
+  name: 'KMSoffline v2.3.5',
+  code: 'TD-000',
+  description: 'Herramienta de activación independiente',
+  url: 'https://drive.google.com/file/d/1GxYTBrXKo05zGK5z2GtfFFi5Z5OBat45/view?usp=sharing'
+};
+
+window.TITANDRIVE_CATALOG = [
+  {
+    name: 'Productividad y Lectura',
+    icon: '📚',
+    items: [
+      { name: 'Foxit Reader', url: 'https://drive.google.com/file/d/1shRuWU_DuF2GDVwQ0b1BbNj7ffKuR3zs/view?usp=drive_link' },
+      { name: 'Microsoft Office 2019 Pro Plus', url: 'https://drive.google.com/file/d/1kA_GHXGrNYeJQ7jtqowWyBoy8oaQSzC-/view?usp=drive_link' },
+      { name: 'SuperCopier 5', url: 'https://drive.google.com/file/d/1-jsUoSshkiheHzznVOxDRPZxCWxsKGjr/view?usp=drive_link' }
+    ]
+  },
+  {
+    name: 'Antivirus',
+    icon: '🛡️',
+    items: [
+      { name: 'Segurmatica', url: 'https://drive.google.com/file/d/1a9Cm_DVn_nqkInrpOWGrOFLRFXhfVp7X/view?usp=drive_link' },
+      { name: 'Kaspersky', url: 'https://drive.google.com/file/d/1dp57dSszDJ1DzGVYm8jnT6C7HnSV9x28/view?usp=drive_link' }
+    ]
+  },
+  {
+    name: 'Compresión',
+    icon: '📦',
+    items: [
+      { name: 'WinRar', url: 'https://drive.google.com/file/d/11nthJKkDvSjL2YvzS15Zjo-yZtkefll6/view?usp=drive_link' },
+      { name: '7-zip', url: 'https://drive.google.com/file/d/1fuArujAABuGUq-bFDbyj6y4RH1kGvE0k/view?usp=drive_link' }
+    ]
+  },
+  {
+    name: 'Desarrollo y Programación',
+    icon: '💻',
+    items: [
+      { name: 'Godot_v4.5.1', url: 'https://drive.google.com/file/d/1HBy3n9nD7lFRvOd2n4GPEuFmn_D0oF_e/view?usp=drive_link' },
+      { name: 'LM-Studio-0.4.14-4-x64', url: 'https://drive.google.com/file/d/14A2nlhxWDjgRqJxuhiIdJJxB1uh_4vtr/view?usp=drive_link' },
+      { name: 'MstyStudio-x64', url: 'https://drive.google.com/file/d/1KP6qn8QjfeuoNVwn92npj_jNV-pia_Z_/view?usp=drive_link' },
+      { name: 'VSCodeUserSetup-x64-1.105.0', url: 'https://drive.google.com/file/d/1mWtCbKiu7OTGO1zxbna5xryPs7VrBbZn/view?usp=drive_link' }
+    ]
+  },
+  {
+    name: 'Emuladores',
+    icon: '🎮',
+    items: [
+      { name: 'MEmu-Setup-8.1.0', url: 'https://drive.google.com/file/d/1TE0haDBuJ0xlBjMokC3PsIjxVQnh-9v4/view?usp=drive_link' },
+      { name: 'LDPlayer_9.5.11.1', url: 'https://drive.google.com/file/d/1swAvWn93DaMt4zuRAaH4-rG4XRKxMnKA/view?usp=sharing' }
+    ]
+  },
+  {
+    name: 'Frameworks y Runtimes',
+    icon: '⚙️',
+    items: [
+      { name: 'Java', url: 'https://drive.google.com/drive/folders/1aS-e25lYxmUFEJhA61ZopT-4ptTbG7jP?usp=drive_link' },
+      { name: 'Visual-C y Runtime', url: 'https://drive.google.com/drive/folders/1ElBwkWhyXbFjsn519Se5vsRK92ceuM_H?usp=drive_link' },
+      { name: 'Anaconda3-2025.12-2-Windows-x86_64', url: 'https://drive.google.com/file/d/11UowbswT9Lm_gJ4WIYUt156rqkxtQYsm/view?usp=drive_link' },
+      { name: 'Direct X', url: 'https://drive.google.com/file/d/1P9ij9SIz_rbD8bImaBFFIdn1Ap_3EJas/view?usp=drive_link' },
+      { name: 'Net. Framework 4.8', url: 'https://drive.google.com/file/d/1FIa_8apAMibJadafrgv6B8-Gqh-_1r-9/view?usp=drive_link' },
+      { name: 'Python-3.14.0-amd64', url: 'https://drive.google.com/file/d/1Js2yHo7Zt41ZLgYLfGAgaJJmiA9WNJsY/view?usp=drive_link' },
+      { name: 'Xampp-8-2-12', url: 'https://drive.google.com/file/d/19-Mau3xgovXucXXH2y-3CFYo8qMkA8ks/view?usp=drive_link' }
+    ]
+  },
+  {
+    name: 'Modelos de IA',
+    icon: '🤖',
+    items: [
+      { name: 'Deepseek-coder-1.3b-chat-and-function-calling.Q4_K_M', url: 'https://drive.google.com/file/d/1lyt0GTs1JwV9YQ5i_u_URp-QhbC0ZCm9/view?usp=drive_link' }
+    ]
+  },
+  {
+    name: 'Multimedia y Diseño',
+    icon: '🎨',
+    items: [
+      { name: 'Blender-5-0-0', url: 'https://drive.google.com/file/d/1P-RPgWqQvqxO8PzPZ6Kl4ylngLeRXwrb/view?usp=drive_link' },
+      { name: 'FSViewerSetup81', url: 'https://drive.google.com/file/d/1Zv9LxW0BLEJrkWHDADs6k8D31WwiOwnK/view?usp=drive_link' },
+      { name: 'K-Lite_Codec_Pack_1452_Full', url: 'https://drive.google.com/file/d/1gwiyteQ8YKCoTF4B8xCWJQpwAAwBkGIc/view?usp=drive_link' },
+      { name: 'OBS-Studio-32.0.1-Windows-x64-Installer', url: 'https://drive.google.com/file/d/1REaacJwWIWJJLJgbqBLHGqOro3g5MyEX/view?usp=drive_link' },
+      { name: 'OpenShot-v3.3.0-x86_64', url: 'https://drive.google.com/file/d/1FkBNCVzOnjHlZpN2Wa2N6X7Htl-1YBXx/view?usp=sharing' },
+      { name: 'Video-to-video-converter', url: 'https://drive.google.com/file/d/19-OlKrlKBZfNNMQi4VEfp2lFLhv_aVe5/view?usp=sharing' }
+    ]
+  },
+  {
+    name: 'Navegadores y Conectividad',
+    icon: '🌐',
+    items: [
+      { name: 'Google Chrome', url: 'https://drive.google.com/file/d/1olJL8Mp_6wuHpYHx0P3FP1Y89QKS3m_H/view?usp=sharing' },
+      { name: 'Internet Download Manager', url: 'https://drive.google.com/file/d/1qupsansdiJZhZLimJEPF0RWT8YJzFvNJ/view?usp=sharing' },
+      { name: 'Mozilla Firefox', url: 'https://drive.google.com/file/d/1TZvOJUUehKcEQMI5V3lBk513txLBPjCm/view?usp=sharing' },
+      { name: 'Opera', url: 'https://drive.google.com/file/d/1XWPOl-ZOS-8UyGka3_e47qwkrRq-pvFv/view?usp=sharing' },
+      { name: 'Psiphon3', url: 'https://drive.google.com/file/d/1XYwjW2vbXoOg33cKJtausbK04NusC_Yw/view?usp=sharing' },
+      { name: 'Zapya PC', url: 'https://drive.google.com/file/d/1k7OO9rq4hKAmaX4u2KuIhcZTefWyMfWs/view?usp=sharing' },
+      { name: 'ProtonVPN_v4.3.13_x64', url: 'https://drive.google.com/file/d/18zotBBUkcbQTVDp2YGdnOYRID24yiqdh/view?usp=sharing' },
+      { name: 'ProDownloader', url: 'https://drive.google.com/file/d/1ozsLblItGuLsC0SFXw51ipowwnG4-60o/view?usp=sharing' },
+      { name: 'MyPublicWiFi', url: 'https://drive.google.com/file/d/1nxNDSZ8ZEFzbxoLie2sITohqvll1Bis_/view?usp=sharing' },
+      { name: 'FreeDownloader', url: 'https://drive.google.com/file/d/1I7jvx0WuxfoGyqgD2MMfS1qcNnl_9Syo/view?usp=sharing' },
+      { name: 'JDownloader 2', url: 'https://drive.google.com/file/d/1dMAJ9GEf8IUD_BUTsKLFlhKKT4puH5KE/view?usp=sharing' },
+      { name: 'Proxifier', url: 'https://drive.google.com/file/d/1fLbz9vB4spa552_yg8p1LzsuRFLvqm1C/view?usp=sharing' }
+    ]
+  },
+  {
+    name: 'Utilidades',
+    icon: '🛠️',
+    items: [
+      { name: 'Hasleo Disk Clone 5.8.2.0', url: 'https://drive.google.com/file/d/1ocpSrM7IdFmfWhY3bCLsdeMVBnkyjlpl/view?usp=sharing' },
+      { name: 'BitWarden', url: 'https://drive.google.com/file/d/1uoVskqXWL_3GqdB99op6vGMj-0EaIAqt/view?usp=sharing' },
+      { name: 'AutoHotKey', url: 'https://drive.google.com/file/d/1mk94mTnDEA_VOq0sakGCbUfh7nFAJ3HS/view?usp=sharing' }
+    ]
+  },
+  {
+    name: 'Herramientas del sistema',
+    icon: '🔧',
+    items: [
+      { name: 'Rufus 4.15', url: 'https://drive.google.com/file/d/17Dnm3-L3-39IdDDFDA4eg4nz22b00b-z/view?usp=sharing' },
+      { name: 'HardDiskSentinel', url: 'https://drive.google.com/file/d/12B0KUvwliy4Csbs79I73XK_CPuWN2cHO/view?usp=sharing' }
+    ]
+  }
+];
+</script>
+  <script>
+/* ============================================================
+   TitanDrive · Archivo Digital — lógica de la aplicación
+   ============================================================ */
+(function(){
+  "use strict";
+
+  var reduce = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+  var raf = window.requestAnimationFrame
+    ? window.requestAnimationFrame.bind(window)
+    : function(cb){ return setTimeout(function(){ cb(Date.now()); }, 16); };
+
+  /* ---------- Preloader ---------- */
+  function hidePreloader(){
+    var pl = document.getElementById("preloader");
+    if(!pl) return;
+    pl.classList.add("done");
+    setTimeout(function(){ if(pl.parentNode) pl.parentNode.removeChild(pl); }, 700);
+  }
+  if(document.readyState === "complete") setTimeout(hidePreloader, 550);
+  else window.addEventListener("load", function(){ setTimeout(hidePreloader, 550); });
+  setTimeout(hidePreloader, 4200);
+
+  /* ---------- Partículas ---------- */
+  function initDust(){
+    var canvas = document.getElementById("dust-canvas");
+    if(!canvas || !canvas.getContext) return;
+    var ctx = null;
+    try { ctx = canvas.getContext("2d"); } catch(e){ ctx = null; }
+    if(!ctx) return;
+
+    var nodes = [], w = 0, h = 0, dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var mouse = { x: -9999, y: -9999 };
+    var LINK = 132;
+
+    function resize(){
+      w = window.innerWidth;
+      h = window.innerHeight;
+      canvas.width = Math.floor(w * dpr);
+      canvas.height = Math.floor(h * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      build();
+    }
+
+    function build(){
+      var density = Math.round((w * h) / 20000);
+      var total = Math.max(26, Math.min(reduce ? 26 : 92, density));
+      nodes = [];
+      for(var i = 0; i < total; i++){
+        nodes.push({
+          x: Math.random() * w,
+          y: Math.random() * h,
+          vx: (Math.random() - .5) * (reduce ? .04 : .28),
+          vy: (Math.random() - .5) * (reduce ? .04 : .28),
+          r: Math.random() * 1.5 + .5
+        });
+      }
+    }
+
+    function frame(){
+      ctx.clearRect(0, 0, w, h);
+      for(var i = 0; i < nodes.length; i++){
+        var n = nodes[i];
+        n.x += n.vx; n.y += n.vy;
+        if(n.x < -20) n.x = w + 20; else if(n.x > w + 20) n.x = -20;
+        if(n.y < -20) n.y = h + 20; else if(n.y > h + 20) n.y = -20;
+
+        var dxm = n.x - mouse.x, dym = n.y - mouse.y;
+        var dm = Math.sqrt(dxm * dxm + dym * dym);
+        if(dm < 150 && dm > 0.001){
+          var force = (150 - dm) / 150;
+          n.x += (dxm / dm) * force * 1.15;
+          n.y += (dym / dm) * force * 1.15;
+        }
+        ctx.beginPath();
+        ctx.arc(n.x, n.y, n.r, 0, Math.PI * 2);
+        ctx.fillStyle = "rgba(201,162,39,0.55)";
+        ctx.fill();
+      }
+      if(!reduce){
+        for(var a = 0; a < nodes.length; a++){
+          for(var b = a + 1; b < nodes.length; b++){
+            var dx = nodes[a].x - nodes[b].x, dy = nodes[a].y - nodes[b].y;
+            var d = Math.sqrt(dx * dx + dy * dy);
+            if(d < LINK){
+              ctx.beginPath();
+              ctx.moveTo(nodes[a].x, nodes[a].y);
+              ctx.lineTo(nodes[b].x, nodes[b].y);
+              ctx.strokeStyle = "rgba(201,162,39," + (0.13 * (1 - d / LINK)).toFixed(3) + ")";
+              ctx.lineWidth = 1;
+              ctx.stroke();
+            }
+          }
+        }
+      }
+      raf(frame);
+    }
+
+    window.addEventListener("resize", resize, { passive: true });
+    window.addEventListener("mousemove", function(e){ mouse.x = e.clientX; mouse.y = e.clientY; }, { passive: true });
+    window.addEventListener("mouseleave", function(){ mouse.x = -9999; mouse.y = -9999; });
+    resize();
+    frame();
+  }
+
+  /* ---------- Spotlight de cursor ---------- */
+  function initSpotlight(){
+    var el = document.querySelector(".spotlight");
+    if(!el || reduce) return;
+    window.addEventListener("mousemove", function(e){
+      el.style.setProperty("--mx", e.clientX + "px");
+      el.style.setProperty("--my", e.clientY + "px");
+    }, { passive: true });
+  }
+
+  /* ---------- Reveal on scroll ---------- */
+  function initReveal(){
+    var items = document.querySelectorAll(".reveal:not(.in-view)");
+    if(!items.length) return;
+    if(reduce || !("IntersectionObserver" in window)){
+      for(var i = 0; i < items.length; i++) items[i].classList.add("in-view");
+      return;
+    }
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(en){
+        if(en.isIntersecting){ en.target.classList.add("in-view"); io.unobserve(en.target); }
+      });
+    }, { threshold: .12, rootMargin: "0px 0px -8% 0px" });
+    for(var j = 0; j < items.length; j++) io.observe(items[j]);
+  }
+
+  /* ---------- Contadores ---------- */
+  function animateCount(el, target, dur){
+    if(reduce){ el.textContent = target; return; }
+    var start = (window.performance && performance.now) ? performance.now() : Date.now();
+    function step(now){
+      var p = Math.min((now - start) / dur, 1);
+      var eased = 1 - Math.pow(1 - p, 3);
+      el.textContent = Math.round(target * eased);
+      if(p < 1) raf(step);
+      else el.textContent = target;
+    }
+    raf(step);
+  }
+  function initCounters(){
+    var els = document.querySelectorAll("[data-count]");
+    if(!els.length) return;
+    if(!("IntersectionObserver" in window)){
+      Array.prototype.forEach.call(els, function(el){ el.textContent = el.getAttribute("data-count"); });
+      return;
+    }
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(en){
+        if(!en.isIntersecting) return;
+        var el = en.target;
+        animateCount(el, parseInt(el.getAttribute("data-count"), 10) || 0, 1400);
+        io.unobserve(el);
+      });
+    }, { threshold: .5 });
+    for(var i = 0; i < els.length; i++) io.observe(els[i]);
+  }
+
+  /* ---------- Tilt + glow ---------- */
+  function initCardMotion(){
+    if(reduce) return;
+    var cards = document.querySelectorAll(".feature-card, .repo-card");
+    for(var i = 0; i < cards.length; i++){
+      (function(card){
+        card.addEventListener("mousemove", function(e){
+          var r = card.getBoundingClientRect();
+          var px = (e.clientX - r.left) / r.width;
+          var py = (e.clientY - r.top) / r.height;
+          card.style.setProperty("--cx", (px * 100) + "%");
+          card.style.setProperty("--cy", (py * 100) + "%");
+          if(card.classList.contains("repo-card")){
+            card.style.transform = "translateY(-7px) rotateX(" + ((.5 - py) * 4).toFixed(2) + "deg) rotateY(" + ((px - .5) * 4).toFixed(2) + "deg)";
+          }
+        });
+        card.addEventListener("mouseleave", function(){ card.style.transform = ""; });
+      })(cards[i]);
+    }
+  }
+
+  /* ---------- Header / progreso / volver arriba ---------- */
+  function initChrome(){
+    var header = document.getElementById("header");
+    var bar = document.getElementById("scrollProgress");
+    var toTop = document.getElementById("toTop");
+    function onScroll(){
+      var y = window.pageYOffset || document.documentElement.scrollTop;
+      if(header) header.classList.toggle("scrolled", y > 24);
+      if(bar){
+        var docH = document.documentElement.scrollHeight - window.innerHeight;
+        bar.style.width = (docH > 0 ? Math.min(100, (y / docH) * 100) : 0) + "%";
+      }
+      if(toTop) toTop.classList.toggle("show", y > 520);
+    }
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+    if(toTop) toTop.addEventListener("click", function(){
+      window.scrollTo({ top: 0, behavior: reduce ? "auto" : "smooth" });
+    });
+  }
+
+  /* ---------- Menú móvil ---------- */
+  function initNav(){
+    var toggle = document.getElementById("navToggle");
+    var links = document.querySelector(".nav-links");
+    if(!toggle || !links) return;
+    toggle.addEventListener("click", function(){
+      var open = links.classList.toggle("open");
+      toggle.classList.toggle("open", open);
+      toggle.setAttribute("aria-expanded", open ? "true" : "false");
+    });
+    links.addEventListener("click", function(e){
+      if(e.target.closest("a")){ links.classList.remove("open"); toggle.classList.remove("open"); }
+    });
+  }
+
+  /* ---------- Toast ---------- */
+  var toastTimer = null;
+  function toast(msg){
+    var el = document.getElementById("toast");
+    if(!el) return;
+    el.textContent = msg;
+    el.classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function(){ el.classList.remove("show"); }, 2600);
+  }
+  window.tdToast = toast;
+
+  /* ---------- Utilidades ---------- */
+  function esc(str){
+    return String(str == null ? "" : str).replace(/[&<>"']/g, function(c){
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  }
+  function safeUrl(url){
+    var u = String(url == null ? "" : url).trim();
+    return /^https?:\/\//i.test(u) ? u : "#";
+  }
+  function codeFor(i){ return "C-" + String(i + 1).padStart(2, "0"); }
+
+  /* ---------- Estadísticas compartidas ---------- */
+  function initMeta(){
+    var cat = window.TITANDRIVE_CATALOG || [];
+    var items = cat.reduce(function(a, f){ return a + ((f.items && f.items.length) || 0); }, 0);
+    var total = items + (window.TITANDRIVE_FEATURED ? 1 : 0);
+    var set = function(id, val){
+      var el = document.getElementById(id);
+      if(el) el.setAttribute("data-count", val);
+    };
+    set("statCategoriesHome", cat.length);
+    set("statFilesHome", total);
+    var y = document.getElementById("metaUpdated");
+    if(y && window.TITANDRIVE_SITE) y.textContent = window.TITANDRIVE_SITE.updated;
+  }
+
+  /* ---------- Catálogo (página repositorio) ---------- */
+  function initRepo(){
+    var grid = document.getElementById("folderGrid");
+    if(!grid) return;
+
+    var FOLDERS = window.TITANDRIVE_CATALOG || [];
+    var FEATURED = window.TITANDRIVE_FEATURED || null;
+    var search = document.getElementById("searchInput");
+    var resultCount = document.getElementById("resultCount");
+    var empty = document.getElementById("emptyState");
+    var featuredEl = document.getElementById("featuredResource");
+
+    var totalItems = FOLDERS.reduce(function(a, f){ return a + ((f.items && f.items.length) || 0); }, 0) + (FEATURED ? 1 : 0);
+    var sC = document.getElementById("statCategories");
+    var sF = document.getElementById("statFiles");
+    if(sC) sC.setAttribute("data-count", FOLDERS.length);
+    if(sF) sF.setAttribute("data-count", totalItems);
+
+    /* Destacado */
+    if(featuredEl && FEATURED){
+      featuredEl.innerHTML =
+        '<article class="featured-card reveal">' +
+          '<div class="featured-main">' +
+            '<span class="featured-tag">Destacado · ' + esc(FEATURED.code) + '</span>' +
+            '<h3>' + esc(FEATURED.name) + '</h3>' +
+            '<p>' + esc(FEATURED.description) + '</p>' +
+          '</div>' +
+          '<a class="btn btn-primary" href="' + esc(safeUrl(FEATURED.url)) + '" target="_blank" rel="noopener noreferrer">Descargar <span class="arw">→</span></a>' +
+        '</article>';
+    }
+
+    function cardHTML(folder, i){
+      var n = (folder.items || []).length;
+      var badge = n
+        ? '<span class="count-badge">' + n + ' archivo' + (n === 1 ? '' : 's') + '</span>'
+        : '<span class="count-badge soon">Próximamente</span>';
+      return '<article class="repo-card reveal" data-idx="' + i + '" role="button" tabindex="0" aria-label="Abrir categoría ' + esc(folder.name) + '">' +
+        '<div class="repo-card-top">' +
+          '<span class="repo-icon" aria-hidden="true">' + esc(folder.icon) + '</span>' +
+          badge +
+        '</div>' +
+        '<h3>' + esc(folder.name) + '</h3>' +
+        '<div class="repo-card-foot">' +
+          '<span class="open">' + esc(codeFor(i)) + '</span>' +
+          '<span class="arrow">→</span>' +
+        '</div>' +
+      '</article>';
+    }
+
+    function render(list){
+      if(!list.length){
+        grid.innerHTML = "";
+        if(empty) empty.style.display = "block";
+      } else {
+        if(empty) empty.style.display = "none";
+        grid.innerHTML = list.map(function(pair){ return cardHTML(pair.folder, pair.index); }).join("");
+      }
+      if(resultCount){
+        resultCount.textContent = list.length === FOLDERS.length
+          ? (FOLDERS.length + " categorías")
+          : (list.length + " de " + FOLDERS.length + " categorías");
+      }
+      initReveal();
+      initCardMotion();
+      var cards = grid.querySelectorAll(".repo-card");
+      for(var i = 0; i < cards.length; i++){
+        (function(card){
+          var idx = parseInt(card.getAttribute("data-idx"), 10);
+          card.addEventListener("click", function(){ openModal(idx); });
+          card.addEventListener("keydown", function(e){
+            if(e.key === "Enter" || e.key === " " || e.key === "Spacebar"){
+              e.preventDefault(); openModal(idx);
+            }
+          });
+        })(cards[i]);
+      }
+    }
+
+    function filter(){
+      var q = (search && search.value ? search.value : "").trim().toLowerCase();
+      if(!q){ render(FOLDERS.map(function(f, i){ return { folder: f, index: i }; })); return; }
+      var out = [];
+      FOLDERS.forEach(function(f, i){
+        var hit = f.name.toLowerCase().indexOf(q) !== -1 ||
+          (f.items || []).some(function(it){ return it.name.toLowerCase().indexOf(q) !== -1; });
+        if(hit) out.push({ folder: f, index: i });
+      });
+      render(out);
+    }
+
+    /* ----- Modal ----- */
+    var overlay = document.getElementById("modalOverlay");
+    var mIcon = document.getElementById("modalIcon");
+    var mTitle = document.getElementById("modalTitle");
+    var mDesc = document.getElementById("modalDesc");
+    var mContent = document.getElementById("modalContent");
+    var lastFocus = null;
+
+    function openModal(idx){
+      var folder = FOLDERS[idx];
+      if(!folder || !overlay) return;
+      lastFocus = document.activeElement;
+      var items = folder.items || [];
+      if(mIcon) mIcon.textContent = folder.icon;
+      if(mTitle) mTitle.innerHTML = '<span class="code">' + esc(codeFor(idx)) + '</span>' + esc(folder.name);
+      if(mDesc) mDesc.textContent = items.length
+        ? (items.length + ' archivo' + (items.length === 1 ? '' : 's') + ' disponible' + (items.length === 1 ? '' : 's'))
+        : 'Sin archivos publicados todavía';
+      if(mContent){
+        mContent.innerHTML = items.length
+          ? items.map(function(it, i){
+              return '<div class="file-row" style="animation-delay:' + (i * 0.04) + 's">' +
+                '<span class="file-icon">' + String(i + 1).padStart(2, "0") + '</span>' +
+                '<span class="file-info"><span class="file-name">' + esc(it.name) + '</span></span>' +
+                '<a class="file-dl" href="' + esc(safeUrl(it.url)) + '" target="_blank" rel="noopener noreferrer">Descargar</a>' +
+              '</div>';
+            }).join("")
+          : '<p class="modal-empty">Esta categoría aún no tiene archivos publicados. Vuelve pronto.</p>';
+      }
+      overlay.classList.add("open");
+      document.body.classList.add("is-locked");
+      var btn = overlay.querySelector(".modal-close-x");
+      if(btn) btn.focus();
+    }
+
+    function closeModal(){
+      if(!overlay) return;
+      overlay.classList.remove("open");
+      document.body.classList.remove("is-locked");
+      if(lastFocus && lastFocus.focus) lastFocus.focus();
+    }
+
+    var cx = document.getElementById("modalCloseX");
+    var cb = document.getElementById("modalCloseBtn");
+    if(cx) cx.addEventListener("click", closeModal);
+    if(cb) cb.addEventListener("click", closeModal);
+    if(overlay) overlay.addEventListener("click", function(e){ if(e.target === overlay) closeModal(); });
+    document.addEventListener("keydown", function(e){
+      if(e.key === "Escape" && overlay && overlay.classList.contains("open")) closeModal();
+    });
+    if(mContent) mContent.addEventListener("click", function(e){
+      var a = e.target.closest(".file-dl");
+      if(a) toast("Abriendo enlace de descarga…");
+    });
+
+    if(search){
+      var t = null;
+      search.addEventListener("input", function(){ clearTimeout(t); t = setTimeout(filter, 130); });
+    }
+    render(FOLDERS.map(function(f, i){ return { folder: f, index: i }; }));
+  }
+
+  /* ---------- Arranque ---------- */
+  function boot(){
+    [initChrome, initNav, initMeta, initRepo, initReveal, initCounters, initCardMotion, initDust, initSpotlight]
+      .forEach(function(init){
+        try { init(); }
+        catch(err){ if(window.console && console.warn) console.warn("[TitanDrive] Falló " + init.name + ":", err); }
+      });
+  }
+  if(document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
+  else boot();
+})();
+</script>
+</body>
+</html>
