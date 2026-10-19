@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="color-scheme" content="dark" />
+  <meta name="theme-color" content="#06080b" />
+  <title>TitanDrive · Herramientas</title>
+  <meta name="description" content="Herramientas y utilidades de TitanDrive: recursos externos organizados por carpetas." />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230a0d12'/%3E%3Crect x='3' y='3' width='58' height='58' rx='12' fill='none' stroke='%23c9a227' stroke-width='2'/%3E%3Ctext x='32' y='43' font-family='Georgia,serif' font-size='30' font-weight='700' fill='%23e8cd6a' text-anchor='middle'%3ETd%3C/text%3E%3C/svg%3E" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,600&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="assets/styles.css" />
+</head>
+<body>
+  <script>document.documentElement.classList.remove("no-js");</script>
+
+  <!-- Preloader -->
+  <div id="preloader" role="status" aria-live="polite" aria-label="Cargando las herramientas">
+    <div class="pl-inner">
+      <div class="pl-mark">Td</div>
+      <div class="pl-name">TitanDrive</div>
+      <div class="pl-bar"><i></i></div>
+      <div class="pl-log">Iniciando herramientas…</div>
+    </div>
+  </div>
+
+  <!-- Capas de fondo -->
+  <div class="fx-layer aurora" aria-hidden="true"><span></span><span></span><span></span></div>
+  <canvas id="dust-canvas" aria-hidden="true"></canvas>
+  <div class="fx-layer grid-overlay" aria-hidden="true"></div>
+  <div class="fx-layer noise" aria-hidden="true"></div>
+  <div class="fx-layer spotlight" aria-hidden="true"></div>
+
+  <div id="scrollProgress" aria-hidden="true"></div>
+
+  <!-- Header -->
+  <header id="header">
+    <div class="container nav-bar">
+      <a href="index.html" class="logo" aria-label="TitanDrive, ir al inicio">TitanDrive <span class="mark">Archivo</span></a>
+      <button class="nav-toggle" id="navToggle" aria-label="Abrir menú" aria-expanded="false" aria-controls="navLinks">
+        <i></i><i></i><i></i>
+      </button>
+      <nav>
+        <ul class="nav-links" id="navLinks">
+          <li><a href="index.html#inicio" data-n="01">Inicio</a></li>
+          <li><a href="index.html#sobre" data-n="02">Sobre</a></li>
+          <li><a href="repositorio.html" data-n="03">Repositorio</a></li>
+          <li><a href="herramientas.html" data-n="04" class="active">Herramientas</a></li>
+          <li><a href="index.html#contacto" data-n="05">Contacto</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+
+    <section id="herramientas" class="tools-hero">
+      <div class="container">
+        <p class="eyebrow reveal in-view">Herramientas</p>
+        <h2 class="section-title reveal in-view">Herramientas <em>útiles</em></h2>
+        <p class="section-sub reveal in-view">
+          Recursos externos y utilidades organizados por carpeta. Cada vez iremos sumando más contenido
+          por este estilo — abre una carpeta para ver sus enlaces.
+        </p>
+
+        <div class="ledger reveal in-view" style="margin-top:2.2rem;">
+          <div class="ledger-item">
+            <span class="ledger-num"><span id="statTools" data-count="0">0</span></span>
+            <span class="ledger-label">Carpetas de herramientas</span>
+          </div>
+          <div class="ledger-item">
+            <span class="ledger-num" style="font-size:1.35rem;margin-top:.4rem;"><span id="metaUpdatedTools">Octubre 2026</span></span>
+            <span class="ledger-label">Última actualización</span>
+          </div>
+        </div>
+
+        <div class="repo-toolbar reveal in-view">
+          <label class="search-wrap" for="toolSearchInput">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input type="text" id="toolSearchInput" placeholder="Buscar herramienta…" autocomplete="off" aria-label="Buscar en herramientas" />
+          </label>
+          <span class="result-count" id="toolResultCount"></span>
+        </div>
+
+        <div class="repo-grid reveal in-view" id="toolsGrid" style="margin-top:2rem;"></div>
+
+        <div class="empty-state" id="toolsEmpty" style="display:none;">
+          <p class="glyph">Sin resultados</p>
+          <p>No hay carpetas de herramientas que coincidan con tu búsqueda. Prueba con otro término.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Modal de carpeta -->
+    <div class="modal-overlay" id="modalOverlay">
+      <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+        <div class="modal-head">
+          <div class="icon-wrap" id="modalIcon" aria-hidden="true">🛠️</div>
+          <div class="titles">
+            <h2 id="modalTitle">Herramienta</h2>
+            <p class="desc" id="modalDesc"></p>
+          </div>
+          <button class="modal-close-x" id="modalCloseX" aria-label="Cerrar ventana">✕</button>
+        </div>
+        <div id="modalContent"></div>
+        <div class="modal-foot">
+          <button class="modal-close" id="modalCloseBtn">Cerrar</button>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <footer>
+    <div class="container">
+      <span class="brand"><b>TitanDrive</b> — archivo digital</span>
+      <span class="made">Hecho por Daniel A. Tellez Trujillo</span>
+    </div>
+  </footer>
+
+  <button id="toTop" aria-label="Volver arriba">
+    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5"/><path d="M5 12l7-7 7 7"/></svg>
+  </button>
+
+  <div id="toast" role="status" aria-live="polite"></div>
+
+  <script src="assets/data.js"></script>
+  <script src="assets/app.js"></script>
+</body>
+</html>
