@@ -113,7 +113,7 @@ window.TITANDRIVE_CATALOG = [
       { name: 'FreeDownloader', url: 'https://drive.google.com/file/d/1I7jvx0WuxfoGyqgD2MMfS1qcNnl_9Syo/view?usp=sharing' },
       { name: 'JDownloader 2', url: 'https://drive.google.com/file/d/1dMAJ9GEf8IUD_BUTsKLFlhKKT4puH5KE/view?usp=sharing' },
       { name: 'Proxifier', url: 'https://drive.google.com/file/d/1fLbz9vB4spa552_yg8p1LzsuRFLvqm1C/view?usp=sharing' },
-      { name: 'Bajalo', url: 'https://drive.google.com/file/d/1UY_GT0q7FdQxPDRRwq_pGdjB90-fZx7l/view?usp=sharing' }
+      { name: 'Bajalo', url: 'https://drive.google.com/file/d/1fRRU7_tjEs4ZL6hlytRL8GagFmNaMWtL/view?usp=sharing' }
     ]
   },
   {
