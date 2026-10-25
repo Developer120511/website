@@ -108,7 +108,6 @@ window.TITANDRIVE_CATALOG = [
       { name: 'Psiphon3', url: 'https://drive.google.com/file/d/1XYwjW2vbXoOg33cKJtausbK04NusC_Yw/view?usp=sharing' },
       { name: 'Zapya PC', url: 'https://drive.google.com/file/d/1k7OO9rq4hKAmaX4u2KuIhcZTefWyMfWs/view?usp=sharing' },
       { name: 'ProtonVPN_v4.3.13_x64', url: 'https://drive.google.com/file/d/18zotBBUkcbQTVDp2YGdnOYRID24yiqdh/view?usp=sharing' },
-      { name: 'ProDownloader', url: 'https://drive.google.com/file/d/1ozsLblItGuLsC0SFXw51ipowwnG4-60o/view?usp=sharing' },
       { name: 'MyPublicWiFi', url: 'https://drive.google.com/file/d/1nxNDSZ8ZEFzbxoLie2sITohqvll1Bis_/view?usp=sharing' },
       { name: 'FreeDownloader', url: 'https://drive.google.com/file/d/1I7jvx0WuxfoGyqgD2MMfS1qcNnl_9Syo/view?usp=sharing' },
       { name: 'JDownloader 2', url: 'https://drive.google.com/file/d/1dMAJ9GEf8IUD_BUTsKLFlhKKT4puH5KE/view?usp=sharing' },
@@ -151,6 +150,24 @@ window.TITANDRIVE_HERRAMIENTAS = [
       { name: 'Pirateo de la versión 7.00 hasta la versión 13.52', url: 'https://gamerhack.github.io/g2all/index.html' },
       { name: 'Pirateo hasta la versión 11.02', url: 'https://zecoxao.github.io/ntfonto/' },
       { name: 'Pirateo de la versión 13.02 hasta la versión 13.52', url: 'https://raw13g.github.io/' }
+    ]
+  },
+  {
+    name: 'Actualizaciones de Antivirus',
+    icon: '🛡️',
+    note: 'Las actualizaciones se renuevan con frecuencia. Toca un archivo y la descarga comenzará automáticamente.',
+    items: [
+      {
+        name: 'Segurmática Antivirus (Segav) — actualización',
+        url: 'https://www.segurmatica.cu/descargas/actualizaciones/segavzip/20261006192001.zip',
+        download: true,
+        resolver: 'segav'
+      },
+      {
+        name: 'Kaspersky — utilidad de actualización (KUU 4.2)',
+        url: 'https://products.s.kaspersky-labs.com/special/kasp_updater3.0/4.2.0.1438/english-INT-4.2.0.1438/65a5d54d9076cb90b2375bce87b1eb90/kuu4.2.0.1438_en.zip',
+        download: true
+      }
     ]
   }
 ];
