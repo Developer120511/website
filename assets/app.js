@@ -261,6 +261,56 @@
     } catch (e) { toast(text); }
   }
 
+  /* ---------- Descarga directa (sin abrir página) ---------- */
+  function triggerDownload(url) {
+    if (!url) return;
+    try {
+      var a = document.createElement("a");
+      a.href = url;
+      a.setAttribute("download", "");
+      a.rel = "noopener";
+      a.style.display = "none";
+      document.body.appendChild(a);
+      a.click();
+      setTimeout(function () { if (a.parentNode) a.parentNode.removeChild(a); }, 1500);
+      toast("Iniciando descarga…");
+    } catch (e) {
+      window.open(url, "_blank", "noopener");
+    }
+  }
+
+  /* Resuelve el enlace más reciente de Segurmática (el nombre cambia a diario) */
+  var SEGAV_PAGE = "https://www.segurmatica.cu/descargas/index.php";
+  var SEGAV_RE = /\/actualizaciones\/segavzip\/(\d{14}\.zip)/;
+  function resolveLatest(kind, cb) {
+    if (kind !== "segav" || typeof fetch !== "function") { cb(null); return; }
+    var target = encodeURIComponent(SEGAV_PAGE);
+    var urls = [
+      "https://api.allorigins.win/raw?url=" + target,
+      "https://api.codetabs.com/v1/proxy?quest=" + target
+    ];
+    var i = 0;
+    function attempt() {
+      if (i >= urls.length) { cb(null); return; }
+      var done = false;
+      var timer = setTimeout(function () { if (!done) { done = true; attempt(); } }, 7000);
+      fetch(urls[i++], { cache: "no-store" })
+        .then(function (r) { return r.ok ? r.text() : Promise.reject(new Error("HTTP " + r.status)); })
+        .then(function (txt) {
+          if (done) return;
+          done = true; clearTimeout(timer);
+          var m = txt.match(SEGAV_RE);
+          if (m) cb("https://www.segurmatica.cu/descargas/actualizaciones/segavzip/" + m[1]);
+          else attempt();
+        })
+        .catch(function () {
+          if (done) return;
+          done = true; clearTimeout(timer); attempt();
+        });
+    }
+    attempt();
+  }
+
   /* ---------- Modal (compartido) ---------- */
   var Modal = (function () {
     var overlay, mIcon, mTitle, mDesc, mContent, lastFocus;
@@ -284,10 +334,28 @@
       if (mContent) mContent.addEventListener("click", function (e) {
         var copy = e.target.closest(".note-copy");
         if (copy) { copyText(copy.getAttribute("data-copy") || ""); return; }
+        var row = e.target.closest(".file-row-dl");
+        if (row) { e.preventDefault(); startRowDownload(row); return; }
         var a = e.target.closest(".file-dl");
         if (a) toast("Abriendo enlace…");
       });
+      if (mContent) mContent.addEventListener("keydown", function (e) {
+        if (e.key !== "Enter" && e.key !== " " && e.key !== "Spacebar") return;
+        var row = e.target.closest(".file-row-dl");
+        if (row) { e.preventDefault(); startRowDownload(row); }
+      });
       return true;
+    }
+
+    function startRowDownload(row) {
+      var url = row.getAttribute("data-url");
+      var kind = row.getAttribute("data-resolver");
+      if (kind) {
+        toast("Buscando la última actualización…");
+        resolveLatest(kind, function (latest) { triggerDownload(latest || url); });
+      } else {
+        triggerDownload(url);
+      }
     }
 
     function open(folder, code) {
@@ -302,10 +370,12 @@
       if (mContent) {
         var html = items.length
           ? items.map(function (it, i) {
-              return '<div class="file-row" style="animation-delay:' + (i * 0.04) + 's">' +
+              var dl = !!it.download;
+              var attrs = ' data-url="' + esc(safeUrl(it.url)) + '"' + (it.resolver ? ' data-resolver="' + esc(it.resolver) + '"' : '');
+              return '<div class="file-row' + (dl ? ' file-row-dl' : '') + '"' + (dl ? ' role="button" tabindex="0"' : '') + attrs + ' style="animation-delay:' + (i * 0.04) + 's">' +
                 '<span class="file-icon">' + pad2(i + 1) + '</span>' +
-                '<span class="file-info"><span class="file-name">' + esc(it.name) + '</span></span>' +
-                '<a class="file-dl" href="' + esc(safeUrl(it.url)) + '" target="_blank" rel="noopener noreferrer">Abrir</a>' +
+                '<span class="file-info"><span class="file-name">' + esc(it.name) + (dl ? ' <span class="dl-tag">Descarga automática</span>' : '') + '</span></span>' +
+                '<a class="file-dl" href="' + esc(safeUrl(it.url)) + '"' + (dl ? ' download' : ' target="_blank" rel="noopener noreferrer"') + '>' + (dl ? 'Descargar' : 'Abrir') + '</a>' +
               '</div>';
             }).join("")
           : '<p class="modal-empty">Esta carpeta aún no tiene contenido publicado. Vuelve pronto.</p>';
