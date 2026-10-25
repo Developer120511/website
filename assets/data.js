@@ -159,9 +159,8 @@ window.TITANDRIVE_HERRAMIENTAS = [
     items: [
       {
         name: 'Segurmática Antivirus (Segav) — actualización',
-        url: 'https://www.segurmatica.cu/descargas/actualizaciones/segavzip/20261006192001.zip',
-        download: true,
-        resolver: 'segav'
+        url: 'http://www.segurmatica.cu/descargas/actualizaciones/segav',
+        download: true
       },
       {
         name: 'Kaspersky — utilidad de actualización (KUU 4.2)',
