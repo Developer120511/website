@@ -155,7 +155,7 @@ window.TITANDRIVE_HERRAMIENTAS = [
   {
     name: 'Actualizaciones de Antivirus',
     icon: '🛡️',
-    note: 'Las actualizaciones se renuevan con frecuencia. Toca un archivo y la descarga comenzará automáticamente.',
+    note: 'Toca un archivo y se descargará automáticamente.',
     items: [
       {
         name: 'Segurmática Antivirus (Segav) — actualización',
