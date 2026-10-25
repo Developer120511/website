@@ -374,7 +374,7 @@
               var attrs = ' data-url="' + esc(safeUrl(it.url)) + '"' + (it.resolver ? ' data-resolver="' + esc(it.resolver) + '"' : '');
               return '<div class="file-row' + (dl ? ' file-row-dl' : '') + '"' + (dl ? ' role="button" tabindex="0"' : '') + attrs + ' style="animation-delay:' + (i * 0.04) + 's">' +
                 '<span class="file-icon">' + pad2(i + 1) + '</span>' +
-                '<span class="file-info"><span class="file-name">' + esc(it.name) + (dl ? ' <span class="dl-tag">Descarga automática</span>' : '') + '</span></span>' +
+                '<span class="file-info"><span class="file-name">' + esc(it.name) + '</span></span>' +
                 '<a class="file-dl" href="' + esc(safeUrl(it.url)) + '"' + (dl ? ' download' : ' target="_blank" rel="noopener noreferrer"') + '>' + (dl ? 'Descargar' : 'Abrir') + '</a>' +
               '</div>';
             }).join("")
