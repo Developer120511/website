@@ -614,3 +614,14 @@ footer .made{font-family:var(--mono);font-size:.68rem;letter-spacing:.14em;text-
   background:rgba(201,162,39,.08);transition:.3s;cursor:pointer;white-space:nowrap;
 }
 .note-copy:hover{background:var(--gold);color:#0a0c10;border-color:transparent}
+
+/* ---------- Descarga automática ---------- */
+.file-row-dl{cursor:pointer}
+.file-row-dl:hover{transform:translateX(3px)}
+.file-row-dl .file-dl{border-color:rgba(201,162,39,.55);background:rgba(201,162,39,.12)}
+.dl-tag{
+  display:inline-block;margin-left:.45rem;font-family:var(--mono);font-size:.52rem;
+  letter-spacing:.14em;text-transform:uppercase;color:var(--gold);
+  border:1px solid var(--line);border-radius:999px;padding:.08rem .42rem;
+  background:rgba(201,162,39,.08);vertical-align:middle;white-space:nowrap;
+}
