@@ -1,0 +1,15 @@
+name = "estudia-api"
+main = "src/index.js"
+compatibility_date = "2026-10-01"
+workers_dev = true
+
+[[d1_databases]]
+binding = "DB"
+database_name = "estudia-db"
+database_id = "9b8ebfa5-ef4e-42ad-8189-7cda8e6badd8"
+
+[ai]
+binding = "AI"
+
+[observability]
+enabled = false
